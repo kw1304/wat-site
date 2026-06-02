@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>감사전 리스크 확인 툴 설명서 · WAT</title>
+<meta name="description" content="감사전 리스크 확인 툴 도구 사용설명서.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
+      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 열기</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap g-hero">
+  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · 감사전 리스크 확인 툴</div>
+  <div class="g-top">
+    <div class="ico ico-a">A</div>
+    <div><h1>감사전 리스크 확인 툴<span class="en">Pre-Audit Risk Screening</span></h1></div>
+  </div>
+  <p class="g-lead">감사를 시작하기 전, 이 회사가 어디서 위험한지 미리 파악하는 도구입니다. 회사 이름만 입력하면 금융감독원 DART에서 최근 5개년 재무제표와 공시를 자동으로 받아와, 이상징후·부정·계속기업·외부 평판 네 방향에서 위험 신호를 신호등(녹/황/적)으로 보여 줍니다. 판단 기준은 회계감사기준에 맞춘 고정 임계값이라 조서에 근거를 그대로 적을 수 있습니다.</p>
+  <div class="g-cta">
+    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 열기 →</a>
+    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+  </div>
+</header>
+
+<main class="wrap g-body">
+
+  <section class="g-block">
+    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
+    <div class="who">
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
+    <div class="concept">
+      <h4>왜 신호등이 룰베이스인가요?</h4>
+      <p>감사조서는 재현성과 근거가 생명입니다. AI가 위험 등급을 매기면 같은 회사에 매번 다른 결과가 나와 방어가 어렵습니다. 그래서 신호(녹/황/적)는 회계감사기준·실무 임계값으로 고정하고, AI는 '왜 위험한지·무엇을 더 볼지' 설명만 보조합니다.</p>
+      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
+    </div>
+    <div class="concept">
+      <h4>수행중요성(PM) 이중게이트</h4>
+      <p>분석적검토에서 작은 계정의 큰 %변동이 거짓 경보를 내지 않도록, %밴드를 넘고 동시에 변동금액이 수행중요성을 초과할 때만 신호가 켜집니다. 한쪽만이면 '관찰'로만 표기합니다.</p>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">3</span> 준비물</h2>
+    <div class="prep">
+      <h4>📋 시작 전에 챙겨주세요</h4>
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+    <div class="steps">
+      <div class="step"><h4>회사명·기준연도 입력</h4><p>상장사·외부감사 대상 비상장사 모두 지원합니다.</p></div>
+      <div class="step"><h4>자동 수집·평가</h4><p>DART에서 5개년 재무제표와 최근 공시를 받아와 4축 위험을 산출합니다.</p>
+        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
+      <div class="step"><h4>신호등·코멘트 확인</h4><p>종합 위험등급과 축별 신호, AI 후속절차 코멘트, 뉴스·공시 이벤트를 화면에서 검토합니다.</p></div>
+      <div class="step"><h4>조서 내보내기</h4><p>ISA 315 위험평가 워크페이퍼(6시트)를 Excel로 받아 감사조서에 첨부합니다.</p></div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">5</span> 무엇이 나오나요</h2>
+    <div class="out">
+      <div class="item"><h4>종합 위험등급</h4><p>적신호·황신호 개수 기반 높음/보통/낮음 (결정론적 룰)</p></div>
+      <div class="item"><h4>4축 신호 상세</h4><p>지표·실측값·임계값·신호등·근거 — 조서에 그대로 인용 가능</p></div>
+      <div class="item"><h4>외부 리스크 카드</h4><p>소송·횡령·감자·부도 등 뉴스/DART 공시이벤트 요약</p></div>
+      <div class="item"><h4>후속감사절차 제안</h4><p>신호별 권고 절차 (예: 매출채권회전율 하락 → 채권조회·기수령 검토)</p></div>
+    </div>
+  </section>
+
+  <section class="g-block faq">
+    <h2><span class="num">6</span> 자주 묻는 질문</h2>
+    <details><summary>비상장 회사도 되나요?</summary><div class="ans">외부감사 대상이면 됩니다. 사업보고서를 내지 않는 순수 외감법인은 감사보고서 원문을 파싱하므로 일부 계정 인식 품질이 달라질 수 있어, 핵심 값은 검토를 권장합니다.</div></details>
+    <details><summary>AI가 위험 등급을 바꾸나요?</summary><div class="ans">아니요. 등급과 신호는 고정 임계값으로만 결정됩니다. AI는 설명·후속절차 코멘트만 보조하며 등급에 영향을 주지 않습니다.</div></details>
+    <details><summary>데이터가 없으면 어떻게 되나요?</summary><div class="ans">조용히 0으로 채우지 않습니다. 조회 실패·결측은 'N/A·신호 보류'로 명시하고 수기입력을 안내합니다.</div></details>
+  </section>
+
+  <div class="endcta">
+    <h2>감사 착수 전, 위험부터 확인하세요</h2>
+    <p>회사명 하나로 DART 재무·공시를 자동 스크리닝합니다.</p>
+    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 열기 →</a>
+  </div>
+
+  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
+  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="rcps.html">RCPS · DCF 평가</a></div>
+</main>
+
+<footer class="legal">
+  <div class="inner">
+    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
+    <span class="right">© 2026 Woongcpa</span>
+  </div>
+</footer>
+
+</body>
+</html>
