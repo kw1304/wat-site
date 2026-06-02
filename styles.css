@@ -103,6 +103,8 @@ section[id]{scroll-margin-top:72px}
 /* ── 툴 카드 그리드 ── */
 .tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem}
 @media(max-width:720px){.tool-grid{grid-template-columns:1fr}}
+/* 단일 카드 섹션(리서치): 혼자 왼쪽에 뜨지 않게 폭 제한 */
+@media(min-width:721px){.tool-grid-single{grid-template-columns:minmax(0,calc(50% - .55rem))}}
 .tcard{
   background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;
   padding:1.5rem 1.5rem 1.3rem;display:flex;flex-direction:column;gap:.9rem;
