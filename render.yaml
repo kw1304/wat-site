@@ -1,10 +1,10 @@
 # Render.com Blueprint — WAT 소개·설명서 정적 사이트
-# 빌드 과정 없음(순수 HTML/CSS). 그대로 정적 호스팅.
+# 빌드 과정 없음(순수 HTML/CSS). 저장소 루트를 그대로 정적 호스팅.
 services:
   - type: web
     name: wat-site
     runtime: static
-    # 이 폴더(WAT_SITE) 안의 파일을 그대로 게시
+    # 저장소 루트(index.html이 있는 곳)를 게시
     staticPublishPath: .
     pullRequestPreviewsEnabled: true
     headers:
@@ -14,8 +14,5 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
-    routes:
-      # 잘못된 경로는 홈으로
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    # 멀티페이지 정적 사이트: rewrite 없음.
+    # Render가 파일을 그대로 서빙하고 "/"는 index.html을 자동 제공.
