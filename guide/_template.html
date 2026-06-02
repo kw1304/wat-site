@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{NAME}} 설명서 · WAT</title>
+<meta name="description" content="{{NAME}} 도구 사용설명서.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23{{ICON_HEX}}'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3E{{ICON}}%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
+      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool={{TOOL_ID}}" target="_blank" rel="noopener">도구 열기</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap g-hero">
+  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#{{CATEGORY}}">{{CAT_LABEL}}</a> · {{NAME}}</div>
+  <div class="g-top">
+    <div class="ico ico-{{ICO_CLASS}}">{{ICON}}</div>
+    <div><h1>{{NAME}}<span class="en">{{EN}}</span></h1></div>
+  </div>
+  <p class="g-lead">{{LEAD}}</p>
+  <div class="g-cta">
+    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool={{TOOL_ID}}" target="_blank" rel="noopener">도구 열기 →</a>
+    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+  </div>
+</header>
+
+<main class="wrap g-body">
+
+  <section class="g-block">
+    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
+    <div class="who">
+      <div class="item"><span class="chk">✓</span> {{WHO_1}}</div>
+      <div class="item"><span class="chk">✓</span> {{WHO_2}}</div>
+      <div class="item"><span class="chk">✓</span> {{WHO_3}}</div>
+      <div class="item"><span class="chk">✓</span> {{WHO_4}}</div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
+    <div class="concept">
+      <h4>{{CONCEPT_1_TITLE}}</h4>
+      <p>{{CONCEPT_1_BODY}}</p>
+      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
+    </div>
+    <div class="concept">
+      <h4>{{CONCEPT_2_TITLE}}</h4>
+      <p>{{CONCEPT_2_BODY}}</p>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">3</span> 준비물</h2>
+    <div class="prep">
+      <h4>📋 시작 전에 챙겨주세요</h4>
+      <ul>
+        <li>{{PREP_1}}</li>
+        <li>{{PREP_2}}</li>
+        <li>{{PREP_3}}</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+    <div class="steps">
+      <div class="step"><h4>{{STEP_1_TITLE}}</h4><p>{{STEP_1_BODY}}</p></div>
+      <div class="step"><h4>{{STEP_2_TITLE}}</h4><p>{{STEP_2_BODY}}</p>
+        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
+      <div class="step"><h4>{{STEP_3_TITLE}}</h4><p>{{STEP_3_BODY}}</p></div>
+      <div class="step"><h4>{{STEP_4_TITLE}}</h4><p>{{STEP_4_BODY}}</p></div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">5</span> 무엇이 나오나요</h2>
+    <div class="out">
+      <div class="item"><h4>{{OUT_1_TITLE}}</h4><p>{{OUT_1_BODY}}</p></div>
+      <div class="item"><h4>{{OUT_2_TITLE}}</h4><p>{{OUT_2_BODY}}</p></div>
+      <div class="item"><h4>{{OUT_3_TITLE}}</h4><p>{{OUT_3_BODY}}</p></div>
+      <div class="item"><h4>{{OUT_4_TITLE}}</h4><p>{{OUT_4_BODY}}</p></div>
+    </div>
+  </section>
+
+  <section class="g-block faq">
+    <h2><span class="num">6</span> 자주 묻는 질문</h2>
+    <details><summary>{{FAQ_1_Q}}</summary><div class="ans">{{FAQ_1_A}}</div></details>
+    <details><summary>{{FAQ_2_Q}}</summary><div class="ans">{{FAQ_2_A}}</div></details>
+    <details><summary>{{FAQ_3_Q}}</summary><div class="ans">{{FAQ_3_A}}</div></details>
+  </section>
+
+  <div class="endcta">
+    <h2>{{CTA_TITLE}}</h2>
+    <p>{{CTA_SUB}}</p>
+    <a class="btn" href="https://wat.taild5874c.ts.net/#tool={{TOOL_ID}}" target="_blank" rel="noopener">도구 열기 →</a>
+  </div>
+
+  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
+  <div class="more-tools">{{MORE_TOOLS}}</div>
+</main>
+
+<footer class="legal">
+  <div class="inner">
+    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
+    <span class="right">© 2026 Woongcpa</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -59,6 +59,28 @@ python -m http.server 8080
 
 - 문구·설명: 각 `*.html`의 본문 텍스트만 고치면 됩니다.
 - 색·여백·카드 모양: `styles.css`의 `:root` 변수와 컴포넌트 규칙.
-- 새 도구 추가: `index.html`에 카드 한 개 복사 + `guide/`에 설명서 파일 한 개 추가.
+
+## 새 도구 추가 (자동)
+
+새 툴이 생기면 **스펙 JSON 하나**만 채워 스크립트를 돌리면, 랜딩 카드 + 설명서 + 상호 링크가 한 번에 추가되고 푸시됩니다.
+
+```powershell
+cd c:\wat-site
+# 1) 예시를 복사해 내용 채우기
+Copy-Item _tool-spec.example.json mytool.json   # → 편집
+# 2) 생성 + (선택)배포
+powershell -ExecutionPolicy Bypass -File .\add-tool.ps1 -Spec .\mytool.json          # 미리보기
+powershell -ExecutionPolicy Bypass -File .\add-tool.ps1 -Spec .\mytool.json -Push     # 생성+커밋+푸시
+```
+
+스크립트가 하는 일:
+1. `guide/_template.html` → `guide/<slug>.html` 생성 (스펙 치환)
+2. `index.html`의 `<!-- CARD-INSERT:분류 -->` 위치에 카드 삽입 (분류=valuation·audit·reference)
+3. 모든 가이드의 `more-tools`(상호 링크) 재동기화
+4. `-Push` 시 git commit + push → Render 자동 재배포
+
+스펙 필드 설명은 `_tool-spec.example.json` 참고. 아이콘은 분류 머리글자(V·A·R)로 자동 통일됩니다.
+
+> 참고: `add-tool.ps1`은 한글 때문에 **UTF-8 BOM**으로 저장돼 있어야 Windows PowerShell 5.1에서 깨지지 않습니다.
 
 © 2026 Woongcpa
