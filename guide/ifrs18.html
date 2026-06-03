@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFRS18 컨버전 툴 설명서 · WAT</title>
+<meta name="description" content="IFRS18 컨버전 툴 도구 사용설명서.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
+      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap g-hero">
+  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · IFRS18 컨버전 툴</div>
+  <div class="g-top">
+    <div class="ico ico-a">A</div>
+    <div><h1>IFRS18 컨버전 툴<span class="en">K-IFRS 1118 Statement Converter</span></h1></div>
+  </div>
+  <p class="g-lead">K-IFRS 제1118호는 2027년부터 손익계산서를 영업·투자·재무 세 범주로 나누고, 영업이익과 재무·법인세차감전이익이라는 의무소계를 새로 요구합니다. 이 도구는 회사의 현행 손익계산서나 시산표를 받아 새 양식으로 자동 재구성하고, 어느 계정을 왜 어느 범주에 넣었는지 근거를 남긴 감사조서까지 만들어 줍니다. 판단이 필요한 부분은 신뢰도를 표시해 사용자가 직접 확정하게 합니다.</p>
+  <div class="g-cta">
+    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 →</a>
+    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+  </div>
+</header>
+
+<main class="wrap g-body">
+
+  <section class="g-block">
+    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
+    <div class="who">
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+      <div class="item"><span class="chk">✓</span> </div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
+    <div class="concept">
+      <h4>왜 3범주로 나누나요?</h4>
+      <p>회사마다 제각각이던 '영업이익' 정의를 표준이 통일하기 위해서입니다. 이자비용 같은 재무손익과 지분법·배당 같은 투자손익을 영업에서 떼어내, 어느 회사든 같은 기준의 영업이익을 비교할 수 있게 합니다.</p>
+      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
+    </div>
+    <div class="concept">
+      <h4>꼭 알아둘 용어</h4>
+      <p>의무소계 — 표준이 반드시 표시하라고 정한 합계(영업이익, 재무·법인세차감전이익). MPM — 조정영업이익처럼 회사가 따로 쓰는 성과지표로, 주석에 IFRS 소계와의 차이를 맞춰 보여야 합니다.</p>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">3</span> 준비물</h2>
+    <div class="prep">
+      <h4>📋 시작 전에 챙겨주세요</h4>
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+    <div class="steps">
+      <div class="step"><h4>1. 입력</h4><p>손익계산서 Excel을 올리거나, 회사명·연도로 DART에서 자동으로 불러옵니다.</p></div>
+      <div class="step"><h4>2. 자동분류</h4><p>계정과목을 영업·투자·재무로 자동 분류하고, 애매한 계정은 '검토필요'로 표시합니다.</p>
+        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
+      <div class="step"><h4>3. 검토·확정</h4><p>표시된 계정의 범주를 직접 확인·수정합니다. 확정한 매핑은 회사별로 저장돼 다음에 재사용됩니다.</p></div>
+      <div class="step"><h4>4. 조서 출력</h4><p>IFRS18 손익계산서·분류근거 로그·(선택)MPM 조정표·현금흐름을 담은 Excel 조서를 내려받습니다.</p></div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">5</span> 무엇이 나오나요</h2>
+    <div class="out">
+      <div class="item"><h4>IFRS18 손익계산서</h4><p>3범주·의무소계·당기/전기 비교표</p></div>
+      <div class="item"><h4>분류근거 로그</h4><p>계정별 범주·근거·신뢰도·수동수정 이력 (감사조서)</p></div>
+      <div class="item"><h4>MPM 조정표</h4><p>조정영업이익 등 → 영업이익 reconciliation, 법인세·비지배지분 효과</p></div>
+      <div class="item"><h4>영업활동현금흐름</h4><p>간접법 시작점을 영업이익으로 재배치한 골격</p></div>
+    </div>
+  </section>
+
+  <section class="g-block faq">
+    <h2><span class="num">6</span> 자주 묻는 질문</h2>
+    <details><summary>자동분류가 다 맞나요?</summary><div class="ans">아니요. 자동분류는 제안일 뿐이며 신뢰도를 함께 표시합니다. 애매하거나 미매칭인 계정은 분홍색으로 강조되며, 최종 범주와 책임은 사용자가 확정합니다.</div></details>
+    <details><summary>은행·보험·투자회사도 되나요?</summary><div class="ans">됩니다. '주된 영업활동'을 금융/투자로 선택하면 이자·지분법손익 등을 영업으로 끌어올리는 분류규칙 전환이 적용됩니다.</div></details>
+    <details><summary>전기 비교표도 만들어 주나요?</summary><div class="ans">네. 당기와 동일한 매핑을 전기에 일관 적용해 소급재작성한 비교표를 함께 산출합니다.</div></details>
+  </section>
+
+  <div class="endcta">
+    <h2>IFRS 18 전환, 지금 점검하세요</h2>
+    <p>현행 손익계산서 한 장이면 새 양식과 조서가 바로 나옵니다.</p>
+    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 →</a>
+  </div>
+
+  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
+  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="rcps.html">RCPS · DCF 평가</a><a href="risk.html">감사전 리스크 확인 툴</a><a href="tax.html">세무 AI</a></div>
+</main>
+
+<footer class="legal">
+  <div class="inner">
+    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
+    <span class="right">© 2026 Woongcpa</span>
+  </div>
+</footer>
+
+</body>
+</html>
