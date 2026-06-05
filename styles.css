@@ -295,13 +295,3 @@ p.var-lead b{color:#fff;font-weight:700}
 .var-card b{font-size:1rem;font-weight:800;letter-spacing:-0.02em}
 .var-card .vk{display:block;margin-top:.7rem;font-size:.74rem;font-weight:700;color:#8FA3C0;letter-spacing:.02em}
 .var-card p{margin-top:.35rem;font-size:.85rem;font-weight:500;color:#D5DEEC;line-height:1.6;word-break:keep-all}
-
-/* ── 도구 직접 연결 임시 비활성화 (공개 준비 전) ──
-   tailscale 사설망 링크는 공개 방문자가 못 여므로 버튼은 두고 클릭만 막음.
-   도구를 공개로 열 때 이 블록만 삭제하면 즉시 복구됨. */
-a[href*="wat.taild5874c.ts.net"]{
-  pointer-events:none;
-  opacity:.5;
-  cursor:not-allowed;
-  filter:grayscale(.25);
-}
