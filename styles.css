@@ -261,6 +261,40 @@ footer.legal b{color:var(--text2);font-weight:700}
 footer.legal .right{color:var(--text3);font-weight:600}
 @media(max-width:680px){footer.legal .inner{flex-direction:column;align-items:flex-start;gap:.3rem}}
 
+/* ── VAR 스토리텔링 밴드 ── */
+.var-band{padding:1.2rem 0 .5rem}
+.var-inner{
+  background:linear-gradient(135deg,#0B1B3A 0%,#13294F 55%,#1E4FA8 140%);
+  border-radius:24px;padding:2.6rem 2rem;color:#fff;position:relative;overflow:hidden;
+}
+.var-inner::before{
+  content:'VAR';position:absolute;right:1rem;bottom:-1.6rem;
+  font-size:clamp(5rem,15vw,9.5rem);font-weight:900;letter-spacing:-0.06em;line-height:1;
+  color:rgba(255,255,255,.045);pointer-events:none;
+}
+.var-kicker{font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8FC0FF}
+.var-inner h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:900;letter-spacing:-0.04em;margin-top:.5rem;line-height:1.25}
+.var-inner h2 .ac{color:#6FA8FF}
+p.var-lead{margin-top:.9rem;max-width:680px;color:#C7D2E3;font-weight:500;font-size:.96rem;line-height:1.75}
+p.var-lead b{color:#fff;font-weight:700}
+.var-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1.9rem;position:relative;z-index:1}
+@media(max-width:720px){.var-cards{grid-template-columns:1fr}}
+.var-card{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  padding:1.2rem 1.2rem 1.3rem;backdrop-filter:blur(4px);
+}
+.var-card .vhead{display:flex;align-items:center;gap:.6rem}
+.var-card .vl{
+  display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;
+  font-weight:900;font-size:1rem;color:#fff;letter-spacing:-0.03em;flex-shrink:0;
+}
+.var-card.v .vl{background:linear-gradient(135deg,#3182F6,#1B64DA)}
+.var-card.a .vl{background:linear-gradient(135deg,#A855F7,#7C3AED)}
+.var-card.r .vl{background:linear-gradient(135deg,#00C2B3,#0E9F8E)}
+.var-card b{font-size:1rem;font-weight:800;letter-spacing:-0.02em}
+.var-card .vk{display:block;margin-top:.7rem;font-size:.74rem;font-weight:700;color:#8FA3C0;letter-spacing:.02em}
+.var-card p{margin-top:.35rem;font-size:.85rem;font-weight:500;color:#D5DEEC;line-height:1.6}
+
 /* ── 도구 직접 연결 임시 비활성화 (공개 준비 전) ──
    tailscale 사설망 링크는 공개 방문자가 못 여므로 버튼은 두고 클릭만 막음.
    도구를 공개로 열 때 이 블록만 삭제하면 즉시 복구됨. */

@@ -43,15 +43,16 @@ if(Test-Path $guidePath){ throw "이미 존재: guide/$($s.slug).html" }
 # ── 1) 가이드 생성 ──
 $tpl = ReadAll (Join-Path $root 'guide/_template.html')
 function J($arr,$i,$f){ if($arr.Count -gt $i){ $arr[$i].$f } else { '' } }
+function S($arr,$i){ if($arr -and $arr.Count -gt $i){ [string]$arr[$i] } else { '' } }   # who·prep = 문자열 배열
 $map = @{
   '{{NAME}}'=$s.name; '{{EN}}'=$s.en; '{{TOOL_ID}}'=$s.tool_id;
   '{{CATEGORY}}'=$s.category; '{{CAT_LABEL}}'=$c.label;
   '{{ICO_CLASS}}'=$c.ico; '{{ICON}}'=$c.icon; '{{ICON_HEX}}'=$c.hex;
   '{{LEAD}}'=$s.lead;
-  '{{WHO_1}}'=(J $s.who 0 'v'); '{{WHO_2}}'=(J $s.who 1 'v'); '{{WHO_3}}'=(J $s.who 2 'v'); '{{WHO_4}}'=(J $s.who 3 'v');
+  '{{WHO_1}}'=(S $s.who 0); '{{WHO_2}}'=(S $s.who 1); '{{WHO_3}}'=(S $s.who 2); '{{WHO_4}}'=(S $s.who 3);
   '{{CONCEPT_1_TITLE}}'=(J $s.concepts 0 't'); '{{CONCEPT_1_BODY}}'=(J $s.concepts 0 'b');
   '{{CONCEPT_2_TITLE}}'=(J $s.concepts 1 't'); '{{CONCEPT_2_BODY}}'=(J $s.concepts 1 'b');
-  '{{PREP_1}}'=(J $s.prep 0 'v'); '{{PREP_2}}'=(J $s.prep 1 'v'); '{{PREP_3}}'=(J $s.prep 2 'v');
+  '{{PREP_1}}'=(S $s.prep 0); '{{PREP_2}}'=(S $s.prep 1); '{{PREP_3}}'=(S $s.prep 2);
   '{{STEP_1_TITLE}}'=(J $s.steps 0 't'); '{{STEP_1_BODY}}'=(J $s.steps 0 'b');
   '{{STEP_2_TITLE}}'=(J $s.steps 1 't'); '{{STEP_2_BODY}}'=(J $s.steps 1 'b');
   '{{STEP_3_TITLE}}'=(J $s.steps 2 't'); '{{STEP_3_BODY}}'=(J $s.steps 2 'b');
