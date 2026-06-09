@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFRS16 리스 계산기 설명서 · WAT</title>
+<meta name="description" content="IFRS16 리스 계산기 도구 사용설명서.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
+      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=ifrs16" target="_blank" rel="noopener">도구 열기</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap g-hero">
+  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · IFRS16 리스 계산기</div>
+  <div class="g-top">
+    <div><h1>IFRS16 리스 계산기<span class="en">K-IFRS 1116 Lease Calculator</span></h1></div>
+  </div>
+  <p class="g-lead">K-IFRS 제1116호는 거의 모든 리스를 재무상태표에 사용권자산과 리스부채로 인식하도록 요구합니다. 이 도구는 리스 계약 목록을 받아 증분차입이자율로 리스부채를 현재가치 평가하고, 월별 상각표(이자·원금·감가상각)를 만든 뒤, 리스기간 중 발생하는 재측정(지수변동·기간변경·범위축소·조기종료)까지 반영합니다. 단기리스·소액자산 면제 계약은 별도로 집계하고, 결산일 기준 유동·비유동 분류와 감사조서 Excel을 자동 출력합니다.</p>
+  <div class="g-cta">
+    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=ifrs16" target="_blank" rel="noopener">도구 열기 →</a>
+    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+  </div>
+</header>
+
+<main class="wrap g-body">
+
+  <section class="g-block">
+    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
+    <div class="who">
+      <div class="item"><span class="chk">✓</span> 리스 회계처리를 검증해야 하는 외부감사인</div>
+      <div class="item"><span class="chk">✓</span> 리스부채·사용권자산 상각표를 작성하는 결산·재무팀</div>
+      <div class="item"><span class="chk">✓</span> 리스 계약이 다수여서 포트폴리오 단위 관리가 필요한 실무자</div>
+      <div class="item"><span class="chk">✓</span> 리스 재측정·변경의 손익효과를 점검해야 하는 회계담당</div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
+    <div class="concept">
+      <h4>사용권자산과 리스부채란?</h4>
+      <p>리스부채는 앞으로 낼 리스료를 증분차입이자율로 할인한 현재가치입니다. 사용권자산은 그 부채에 초기직접원가·선급리스료를 더하고 받은 인센티브를 뺀 금액으로, 리스기간(또는 내용연수)에 걸쳐 정액 상각합니다.</p>
+      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
+    </div>
+    <div class="concept">
+      <h4>재측정과 리스변경의 차이</h4>
+      <p>재측정은 지수·요율 변동처럼 추정이 바뀌는 것이고, 리스변경은 계약 자체를 양 당사자가 다시 합의하는 것입니다. 지수연동 변동은 원래 할인율을 유지하지만(§45(c)), 기간·범위 변경은 변경시점의 개정 할인율을 씁니다.</p>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">3</span> 준비물</h2>
+    <div class="prep">
+      <h4>📋 시작 전에 챙겨주세요</h4>
+      <ul>
+        <li>리스 계약 목록 (계약명·개시일·종료일·리스료·증분차입이자율)</li>
+        <li>단기리스(12개월 이하)·소액자산 면제 여부</li>
+        <li>(선택) 매수선택권·잔존가치보증·재측정 이벤트(지수변동·기간변경·범위축소·조기종료)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+    <div class="steps">
+      <div class="step"><h4>1. 입력</h4><p>계약을 폼으로 직접 추가하거나, 제공되는 Excel 양식에 리스 목록을 채워 일괄 업로드합니다.</p></div>
+      <div class="step"><h4>2. 계산</h4><p>각 계약의 리스부채를 현재가치로 평가하고, 재측정 이벤트를 반영한 월별 상각표를 만듭니다.</p>
+        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
+      <div class="step"><h4>3. 검토</h4><p>계약별 상각표(재측정·손익 행 강조)와 포트폴리오 요약(유동·비유동, 면제 합계)을 확인합니다.</p></div>
+      <div class="step"><h4>4. 조서 출력</h4><p>포트폴리오 요약·계약별 상각표·면제계약 목록을 담은 Excel 감사조서를 내려받습니다.</p></div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">5</span> 무엇이 나오나요</h2>
+    <div class="out">
+      <div class="item"><h4>포트폴리오 요약</h4><p>사용권자산·리스부채(유동/비유동)·이자비용·감가상각비·당기손익효과 합계</p></div>
+      <div class="item"><h4>계약별 상각표</h4><p>월별 기초부채·이자·원금·기말부채·감가상각·기말ROU (재측정·손익 행 강조)</p></div>
+      <div class="item"><h4>면제계약 목록</h4><p>단기리스·소액자산 계약과 리스료 합계 (별도 공시)</p></div>
+      <div class="item"><h4></h4><p></p></div>
+    </div>
+  </section>
+
+  <section class="g-block faq">
+    <h2><span class="num">6</span> 자주 묻는 질문</h2>
+    <details><summary>리스료가 매년 물가에 연동되면 어떻게 하나요?</summary><div class="ans">지수연동(INDEX_LINKED) 리스료로 입력하고, 변동 시점에 새 지수값으로 재측정 이벤트를 추가합니다. K-IFRS 1116 §45(c)에 따라 지수변동 재측정은 원래 할인율을 그대로 사용합니다.</div></details>
+    <details><summary>매수선택권이나 소유권이전이 있으면?</summary><div class="ans">매수선택권 행사가 합리적으로 확실하면 행사가격을 마지막 현금흐름에 포함하고, 감가상각을 리스기간이 아닌 자산의 내용연수에 걸쳐 수행합니다(§31).</div></details>
+    <details><summary>리스 중도 해지나 면적 축소도 반영되나요?</summary><div class="ans">됩니다. 조기종료는 잔여 부채·자산을 제거하고 차이를 손익으로, 범위축소는 비례적으로 제거한 뒤 나머지를 재측정합니다(§44~46).</div></details>
+  </section>
+
+  <div class="endcta">
+    <h2>리스 회계, 계약 목록 한 장으로 끝내세요</h2>
+    <p>최초인식부터 재측정·면제까지 상각표와 감사조서가 바로 나옵니다.</p>
+    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ifrs16" target="_blank" rel="noopener">도구 열기 →</a>
+  </div>
+
+  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
+  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="ifrs18.html">IFRS18 컨버전 툴</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="rcps.html">RCPS · DCF 평가</a><a href="risk.html">Risk Tool</a><a href="tax.html">세무 AI</a></div>
+</main>
+
+<footer class="legal">
+  <div class="inner">
+    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
+    <span class="right">© 2026 Woongcpa</span>
+  </div>
+</footer>
+
+</body>
+</html>
