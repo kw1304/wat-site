@@ -124,7 +124,7 @@ section[id]{scroll-margin-top:72px}
 .ico-v{background:linear-gradient(135deg,#3182F6,#1B64DA)}
 .ico-a{background:linear-gradient(135deg,#7C3AED,#5B21B6)}
 .ico-r{background:linear-gradient(135deg,var(--teal),#0E9F8E)}
-.tcard-placeholder{border-style:dashed;align-items:center;justify-content:center;text-align:center;color:var(--text3);background:transparent}
+.tcard-placeholder{border-style:dashed;align-items:center;justify-content:center;text-align:center;color:var(--text3);background:transparent;min-height:200px}
 .tcard h3{font-size:1.12rem;font-weight:800;letter-spacing:-0.03em}
 .tcard h3 .en{display:block;font-size:.72rem;font-weight:600;color:var(--text3);margin-top:.15rem;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tcard .desc{font-size:.86rem;color:var(--text2);font-weight:500;line-height:1.6}
