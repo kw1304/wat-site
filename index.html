@@ -1,309 +1,720 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>WAT · 웅계사의 감사 자동화 도구</title>
-<meta name="description" content="회계감사 실무를 자동화하는 도구 모음. 평가·감사보조·리서치를 한곳에서. 비전공자도 따라 하는 설명서 제공.">
-<meta property="og:title" content="WAT · Woongcpa's Audit Tools">
-<meta property="og:description" content="회계감사 실무 자동화 도구 모음과 사용설명서">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ko_KR">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233182F6'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EWAT%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
+<meta name="description" content="회계감사 실무를 자동화하는 도구 모음. 평가·감사보조·리서치를 한곳에서. 비전공자도 따라 하는 설명서 제공." />
+<meta property="og:title" content="WAT · Woongcpa's Audit Tools" />
+<meta property="og:description" content="회계감사 실무 자동화 도구 모음과 사용설명서" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="ko_KR" />
 
-<!-- 네비 -->
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="index.html">
-      <span class="mark">WAT</span>
-      <span>Woongcpa's <span class="mark-en">Audit Tools</span></span>
-    </a>
-    <div class="nav-links">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* =========================================================================
+   WAT — 디자인 토큰
+   브랜드 색을 바꾸려면 아래 --accent 값만 수정하면 전체가 따라옵니다.
+   ========================================================================= */
+:root{
+  --bg:        #F7F8FA;   /* 페이지 배경 (쿨 오프화이트) */
+  --surface:   #FFFFFF;   /* 카드/표면 */
+  --ink:       #11151B;   /* 본문 텍스트 */
+  --muted:     #5B6470;   /* 보조 텍스트 */
+  --faint:     #8A93A0;   /* 더 옅은 텍스트 */
+  --line:      #E7EAEF;   /* 경계선 */
+  --accent:    #2B5FD9;   /* ★ 포인트 컬러 — 여기만 바꾸면 됨 */
+  --accent-soft: color-mix(in oklab, var(--accent) 8%, #fff);
+  --accent-line: color-mix(in oklab, var(--accent) 22%, #fff);
+  --dark:      #0F1320;   /* 신뢰 밴드 배경 */
+  --dark-2:    #161B2B;
+  --radius:    16px;
+  --maxw:      1200px;
+  --ease:      cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+a{color:inherit;text-decoration:none;}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;}
+.tnum{font-variant-numeric:tabular-nums;}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;
+}
+
+/* ---- 스크롤 리빌: JS가 켜진 환경에서만 숨김 (JS 없으면 그냥 보임) ---- */
+html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
+@media (prefers-reduced-motion: reduce){
+  html.js [data-reveal]{opacity:1 !important;transform:none !important;}
+}
+
+/* =========================  HEADER  ========================= */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in oklab, var(--bg) 80%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s, background .3s;
+}
+.hdr.scrolled{border-bottom-color:var(--line);background:color-mix(in oklab, var(--bg) 92%, transparent);}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:64px;}
+.brand{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;}
+.brand b{font-size:20px;}
+.brand span{font-size:11px;color:var(--faint);letter-spacing:.04em;}
+.nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.nav a{
+  padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);
+  font-weight:500;transition:color .2s,background .2s;
+}
+.nav a:hover{color:var(--ink);background:color-mix(in oklab,var(--ink) 5%,transparent);}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;
+  transition:transform .15s var(--ease), background .2s, box-shadow .2s;
+  box-shadow:0 1px 2px rgba(16,21,40,.12);
+}
+.btn:hover{background:color-mix(in oklab,var(--accent) 88%, #000);transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in oklab,var(--accent) 32%,transparent);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none;}
+.btn.ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);transform:translateY(-1px);}
+.btn.sm{padding:8px 14px;font-size:13px;}
+/* 헤더 전용 CTA — 절제된 잉크 톤, 호버에서만 액센트 */
+.btn.dark{background:var(--ink);color:#fff;box-shadow:none;}
+.btn.dark .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transition:transform .2s;}
+.btn.dark:hover{background:color-mix(in oklab,var(--ink) 90%, var(--accent));transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,21,40,.16);}
+.btn.dark:hover .dot{transform:scale(1.3);}
+
+/* =========================  HERO  ========================= */
+.hero{position:relative;overflow:hidden;padding:92px 0 64px;}
+.hero::before{ /* 아주 은은한 그리드 글로우 (절제된 분위기) */
+  content:"";position:absolute;inset:-20% -10% auto -10%;height:560px;z-index:0;
+  background:
+    radial-gradient(58% 58% at 78% 4%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 68%),
+    radial-gradient(46% 46% at 8% 0%, color-mix(in oklab,var(--accent) 4%,transparent), transparent 70%);
+  pointer-events:none;animation:drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-18px,0)}}
+.hero .wrap{position:relative;z-index:1;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);font-size:12px;color:var(--muted);font-weight:500;
+}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;
+  box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 60%,transparent);animation:pulse 2.4s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 50%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{
+  margin:0 0 22px;font-size:clamp(34px,5.2vw,60px);line-height:1.12;
+  letter-spacing:-.03em;font-weight:800;text-wrap:balance;max-width:16ch;
+}
+.hero h1 .hl{color:var(--accent);}
+.hero p.lede{margin:0 0 30px;font-size:clamp(16px,1.6vw,19px);color:var(--muted);max-width:54ch;line-height:1.65;}
+.hero p.lede b{color:var(--ink);font-weight:600;}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:46px;}
+.hero-note{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--faint);margin-bottom:54px;}
+.hero-note span{display:inline-flex;align-items:center;gap:6px;}
+.hero-note span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);}
+
+/* HERO STAT ROW (카운트업) */
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+}
+.stat{background:var(--surface);padding:26px 24px;}
+.stat .num{font-size:clamp(30px,3.6vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+.stat .num .suf{font-size:.5em;color:var(--accent);margin-left:2px;font-weight:700;}
+.stat .lbl{margin-top:10px;font-size:13px;color:var(--muted);}
+
+/* =========================  SECTION 공통  ========================= */
+.section{padding:96px 0;}
+.section-head{max-width:60ch;margin-bottom:48px;}
+.section-head h2{margin:14px 0 14px;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.025em;font-weight:800;line-height:1.18;}
+.section-head p{margin:0;color:var(--muted);font-size:16px;line-height:1.65;}
+
+/* VAR — 심판 네모 드로잉 + 순차 스탬프 + 자동 스포트라이트 */
+.var-stage{position:relative;padding:52px 48px 56px;border-radius:24px;transition:background .6s ease,box-shadow .6s ease;}
+.var-stage .section-head{max-width:60ch;margin-bottom:40px;}
+.var-stage .section-head h2{margin:14px 0 14px;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.025em;font-weight:800;line-height:1.18;}
+.var-stage .section-head p{margin:0;color:var(--muted);font-size:16px;line-height:1.65;}
+.var-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.var-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s,border-color .45s,background .45s,opacity .5s var(--ease);}
+.var-letter{font-size:64px;font-weight:800;line-height:.9;letter-spacing:-.04em;color:var(--accent);opacity:.16;position:absolute;top:18px;right:24px;transform-origin:top right;transition:opacity .45s,transform .55s cubic-bezier(.2,1.4,.4,1);}
+.var-card .kind{font-size:13px;font-weight:700;letter-spacing:.02em;transition:color .45s;}
+.var-card .ko{font-size:18px;font-weight:700;margin:2px 0 12px;}
+.var-card .desc{color:var(--muted);font-size:14.5px;line-height:1.6;}
+.var-card .prog{position:absolute;top:0;left:0;height:3px;width:0;background:var(--accent);opacity:0;border-top-left-radius:var(--radius);}
+.var-card::after{content:"";position:absolute;top:0;left:-45%;width:45%;height:100%;background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--accent) 14%,transparent),transparent);transform:skewX(-14deg);transition:left .65s ease;pointer-events:none;z-index:2;}
+html.js .var-card:hover::after{left:120%;}
+html.js .var-stage:not(.built) .section-head{opacity:0;transform:translateY(16px);}
+html.js .var-stage:not(.built) .var-card{opacity:0;transform:translateY(20px);}
+html.js .var-stage:not(.built) .var-letter{opacity:0;transform:scale(1.6) rotate(-5deg);}
+html.js .var-stage .section-head{transition:opacity .55s var(--ease),transform .55s var(--ease);}
+html.js .var-stage.built .section-head{opacity:1;transform:none;}
+html.js .var-stage.built .var-card{opacity:.85;transform:none;}
+html.js .var-stage.built .var-card:nth-child(1){transition-delay:.10s;}
+html.js .var-stage.built .var-card:nth-child(2){transition-delay:.22s;}
+html.js .var-stage.built .var-card:nth-child(3){transition-delay:.34s;}
+html.js .var-stage.built .var-letter{opacity:.16;transform:none;}
+html.js .var-card.active{opacity:1;transform:translateY(-6px) scale(1.015);background:var(--accent-soft);border-color:var(--accent-line);box-shadow:0 20px 46px rgba(16,21,40,.12);}
+html.js .var-card.active .var-letter{opacity:.9;}
+html.js .var-card.active .kind{color:var(--accent);}
+html.js .var-card.active .prog{opacity:1;width:100%;transition:width 3s linear;}
+.var-draw{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:4;}
+.var-draw path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;}
+html.js .var-draw .half{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);}
+.var-draw.draw .half{opacity:1;animation:var-stroke 1.15s var(--ease) forwards;}
+@keyframes var-stroke{from{stroke-dashoffset:var(--len);}to{stroke-dashoffset:0;}}
+html:not(.js) .var-draw .half{opacity:1;}
+html.js .var-stage.built{background:color-mix(in oklab,var(--accent) 3%,var(--bg));box-shadow:0 24px 60px rgba(16,21,40,.06);}
+@media (prefers-reduced-motion: reduce){html.js .var-draw .half{stroke-dashoffset:0;opacity:1;animation:none;}html.js .var-stage .section-head,html.js .var-stage .var-card{opacity:1;transform:none;}html.js .var-stage .var-letter{opacity:.16;transform:none;}html.js .var-card.active{transform:none;box-shadow:none;}html.js .var-card.active .prog{transition:none;}}
+@media (max-width:820px){.var-stage{padding:36px 24px 40px;}.var-grid{grid-template-columns:1fr;}.var-draw{display:none;}html.js .var-stage .var-card,html.js .var-stage .section-head{opacity:1 !important;transform:none !important;}}
+
+/* =========================  TOOL CARDS  ========================= */
+.tool-section{padding:64px 0;}
+.tool-section + .tool-section{border-top:1px solid var(--line);}
+.tool-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:34px;}
+.tool-head h2{margin:10px 0 0;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;font-weight:800;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+.card{
+  display:flex;flex-direction:column;gap:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;transition:transform .28s var(--ease), box-shadow .28s, border-color .28s;
+}
+.card:hover{transform:translateY(-4px);border-color:var(--accent-line);box-shadow:0 16px 40px rgba(16,21,40,.08);}
+.card-top{display:flex;align-items:center;gap:12px;}
+.badge-sq{
+  width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;
+  background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:16px;
+}
+.card-tag{font-size:11.5px;color:var(--muted);letter-spacing:.04em;}
+.card h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.35;}
+.card .ttl-en{font-size:12px;color:var(--faint);margin-top:3px;font-weight:500;}
+.card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.62;flex:1;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{
+  font-size:11px;color:var(--muted);background:color-mix(in oklab,var(--ink) 4%,transparent);
+  border:1px solid var(--line);border-radius:7px;padding:4px 9px;letter-spacing:.01em;
+}
+.card-links{display:flex;align-items:center;gap:14px;margin-top:2px;}
+.lnk{font-size:13px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;transition:color .2s,gap .2s;}
+.lnk:hover{color:var(--ink);}
+.lnk.go{color:var(--accent);}
+.lnk.go:hover{gap:9px;}
+.lnk .arr{transition:transform .2s;}
+.lnk:hover .arr{transform:translateX(2px);}
+.dev-pill{margin-left:auto;font-size:11px;font-weight:700;color:var(--faint);background:color-mix(in oklab,var(--ink) 5%,transparent);border-radius:999px;padding:4px 11px;}
+.card.placeholder{
+  border-style:dashed;background:transparent;align-items:center;justify-content:center;
+  text-align:center;color:var(--faint);font-size:13.5px;min-height:160px;
+}
+.card.placeholder:hover{transform:none;border-color:var(--accent-line);box-shadow:none;color:var(--muted);}
+
+/* =========================  신뢰 밴드 (다크)  ========================= */
+.band{background:var(--dark);color:#fff;position:relative;overflow:hidden;}
+.band::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(50% 70% at 85% 0%, color-mix(in oklab,var(--accent) 26%,transparent), transparent 65%),
+  radial-gradient(40% 60% at 10% 100%, color-mix(in oklab,var(--accent) 16%,transparent), transparent 60%);
+  pointer-events:none;}
+.band .wrap{position:relative;z-index:1;padding:84px 32px;}
+.band .eyebrow{color:color-mix(in oklab,var(--accent) 60%,#fff);}
+.band h2{margin:14px 0 8px;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;font-weight:800;}
+.band .sub{color:#9aa3b4;margin:0 0 48px;font-size:15.5px;}
+.band-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.bstat{border-top:2px solid color-mix(in oklab,var(--accent) 50%,transparent);padding-top:18px;}
+.bstat .num{font-size:clamp(36px,4.6vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1;}
+.bstat .num .suf{font-size:.42em;color:color-mix(in oklab,var(--accent) 55%,#fff);margin-left:3px;}
+.bstat .lbl{margin-top:12px;font-size:13.5px;color:#aab3c4;line-height:1.5;}
+.band-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:44px;}
+.band-badges .b{font-size:12px;color:#c3cad8;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 13px;}
+
+/* =========================  WHY WAT  ========================= */
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;}
+.why .item{padding-top:22px;border-top:2px solid var(--accent);}
+.why .item .n{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;}
+.why .item h4{margin:16px 0 10px;font-size:19px;font-weight:700;letter-spacing:-.01em;}
+.why .item p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.65;}
+
+/* =========================  FOOTER  ========================= */
+.foot{border-top:1px solid var(--line);padding:48px 0;}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start;}
+.foot .disc{font-size:12.5px;color:var(--faint);line-height:1.6;}
+.foot .disc b{color:var(--muted);}
+.foot .cr{font-size:12.5px;color:var(--faint);}
+
+/* =========================  반응형  ========================= */
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .var-grid{grid-template-columns:1fr;}
+  .band-stats{grid-template-columns:repeat(2,1fr);}
+  .why{grid-template-columns:1fr;gap:28px;}
+  .nav a:not(.btn){display:none;}
+}
+@media (max-width:560px){
+  .wrap{padding:0 20px;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .band-stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+
+<body>
+<!-- JS 사용 가능 표시 (리빌 초기 숨김을 위해) -->
+<script>document.documentElement.className+=" js";</script>
+
+<!-- ============================ HEADER ============================ -->
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="/index.html"><b>WAT</b><span>Woongcpa's Audit Tools</span></a>
+    <nav class="nav">
       <a href="#valuation">평가</a>
       <a href="#audit">감사보조</a>
       <a href="#reference">리서치</a>
-      <a class="nav-cta" href="https://wat.taild5874c.ts.net/" target="_blank" rel="noopener">도구 바로가기</a>
-    </div>
+      <a class="btn sm dark" href="https://wat.taild5874c.ts.net/" target="_blank" rel="noopener"><span class="dot"></span>도구 바로가기</a>
+    </nav>
   </div>
-</nav>
-
-<!-- 히어로 -->
-<header class="wrap hero">
-  <span class="eyebrow"><span class="dot"></span> 회계감사 실무 자동화</span>
-  <h1>반복 업무는 도구에 맡기고,<br><span class="ac">판단</span>에 집중하세요</h1>
-  <p class="sub">평가·감사보조·리서치까지. 감사인이 직접 만든 11개의 도구를 한곳에 모았습니다.
-    각 도구마다 <b style="color:var(--text)">비전공자도 따라 하는 설명서</b>를 제공합니다.</p>
-  <div class="actions">
-    <a class="btn btn-primary" href="#valuation">도구 둘러보기 →</a>
-    <a class="btn btn-ghost" href="https://wat.taild5874c.ts.net/" target="_blank" rel="noopener">바로 실행하기</a>
-  </div>
-  <p class="trust"><b>K-IFRS · ISA</b> 기준 반영 · 한국 감사 실무 최적화 · 원본 양식 보존</p>
 </header>
 
-<!-- VAR 스토리텔링 -->
-<section class="wrap var-band">
-  <div class="var-inner">
-    <span class="var-kicker">Why “VAR”</span>
-    <h2>감사인의 판단에 <span class="ac">VAR</span>를 더합니다</h2>
-    <p class="var-lead">꼼꼼한 감사에도 '여기까지 봤나', '이 근거가 맞나' 하는 빈틈은 남습니다.<br>
-      WAT는 그 판단을 대신하지 않고, VAR처럼 놓친 장면을 다시 비춰 <b>빈틈을 메웁니다.</b></p>
-    <div class="var-cards">
-      <div class="var-card v">
-        <div class="vhead"><span class="vl">V</span><b>Valuation</b></div>
-        <span class="vk">평가</span>
-        <p>복합금융상품·사업가치의 공정가치를 기준에 맞게 다시 계산합니다.</p>
+<!-- ============================ HERO ============================ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge" data-reveal data-step="0"><i></i> 회계감사 실무 자동화</div>
+    <h1 data-reveal data-step="1">반복 업무는 도구에 맡기고,<br /><span class="hl">판단</span>에 집중하세요</h1>
+    <p class="lede" data-reveal data-step="2">
+      평가·감사보조·리서치까지. 감사인이 직접 만든 11개의 도구를 한곳에 모았습니다.
+      각 도구마다 <b>비전공자도 따라 하는 설명서</b>를 제공합니다.
+    </p>
+    <div class="hero-cta" data-reveal data-step="3">
+      <a class="btn" href="#valuation">도구 둘러보기 →</a>
+      <a class="btn ghost" href="https://wat.taild5874c.ts.net/" target="_blank" rel="noopener">바로 실행하기</a>
+    </div>
+    <div class="hero-note" data-reveal data-step="4">
+      <span><b class="mono">K-IFRS · ISA</b> 기준 반영</span>
+      <span>한국 감사 실무 최적화</span>
+      <span>원본 양식 보존</span>
+    </div>
+
+    <!-- 카운트업 스탯 -->
+    <div class="stats" data-reveal data-step="5">
+      <div class="stat"><div class="num tnum" data-count="2">0</div><div class="lbl">평가 툴</div></div>
+      <div class="stat"><div class="num tnum" data-count="6">0</div><div class="lbl">감사보조 툴</div></div>
+      <div class="stat"><div class="num tnum" data-count="3">0</div><div class="lbl">리서치 툴</div></div>
+      <div class="stat"><div class="num tnum" data-count="11">0</div><div class="lbl">총 툴</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHY VAR ============================ -->
+<section class="section">
+  <div class="wrap">
+    <div class="var-stage" id="varStage" title="클릭하면 다시 재생합니다">
+      <svg class="var-draw" id="varDraw" preserveAspectRatio="none" aria-hidden="true">
+        <path class="half right" d=""></path>
+        <path class="half left" d=""></path>
+      </svg>
+      <div class="section-head">
+        <div class="eyebrow">Why “VAR”</div>
+        <h2>감사인의 판단에 VAR를 더합니다</h2>
+        <p>꼼꼼한 감사에도 '여기까지 봤나', '이 근거가 맞나' 하는 빈틈은 남습니다.
+           WAT는 그 판단을 대신하지 않고, VAR처럼 놓친 장면을 다시 비춰 <b style="color:var(--ink)">빈틈을 메웁니다.</b></p>
       </div>
-      <div class="var-card a">
-        <div class="vhead"><span class="vl">A</span><b>Audit</b></div>
-        <span class="vk">감사보조</span>
-        <p>분개·조회·리스크를 빠짐없이 훑어 놓치기 쉬운 징후를 잡아냅니다.</p>
-      </div>
-      <div class="var-card r">
-        <div class="vhead"><span class="vl">R</span><b>Reference · AI</b></div>
-        <span class="vk">리서치</span>
-        <p>기준·감사·세법을 출처와 함께 되짚어 근거를 다시 확인합니다.</p>
+      <div class="var-grid">
+        <div class="var-card"><span class="prog"></span><div class="var-letter">V</div><div class="kind">Valuation</div><div class="ko">평가</div><div class="desc">복합금융상품·사업가치의 공정가치를 기준에 맞게 다시 계산합니다.</div></div>
+        <div class="var-card"><span class="prog"></span><div class="var-letter">A</div><div class="kind">Audit</div><div class="ko">감사보조</div><div class="desc">분개·조회·리스크를 빠짐없이 훑어 놓치기 쉬운 징후를 잡아냅니다.</div></div>
+        <div class="var-card"><span class="prog"></span><div class="var-letter">R</div><div class="kind">Reference · AI</div><div class="ko">리서치</div><div class="desc">기준·감사·세법을 출처와 함께 되짚어 근거를 다시 확인합니다.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 평가 -->
-<section class="section wrap" id="valuation">
-  <div class="cat-label">
-    <span class="swatch" style="background:linear-gradient(135deg,#3182F6,#1B64DA)"></span>
-    평가 <span class="en">Valuation</span>
-  </div>
-  <div class="tool-grid">
-    <!-- RCPS/DCF -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-v">V</div>
-        <h3>RCPS · DCF 평가<span class="en">상환전환우선주 / 현금흐름할인</span></h3>
+<!-- ============================ 평가 ============================ -->
+<section class="tool-section" id="valuation">
+  <div class="wrap">
+    <div class="tool-head" data-reveal>
+      <div>
+        <div class="eyebrow">평가 · Valuation</div>
+        <h2>공정가치를 기준대로 다시 계산</h2>
       </div>
-      <p class="desc">상환전환우선주(RCPS)·전환사채 등 복합금융상품과 사업가치의 공정가치를 K-IFRS 1109 기준으로 평가합니다. 변동성·할인율·시나리오까지 한 번에.</p>
-      <div class="feats">
-        <span class="feat">계약조건 입력</span><span class="feat">변동성 산출</span>
-        <span class="feat">DCF·WACC</span><span class="feat">4개 평가모형</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/rcps.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- IRS -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-v">V</div>
-        <h3>IRS 평가<span class="en">이자율스왑 · 위험회피</span></h3>
-      </div>
-      <p class="desc">이자율스왑(IRS)의 공정가치를 평가하고, 위험회피회계 적용을 위한 효과성을 검증합니다. 변동·고정 레그 현재가치를 자동 계산.</p>
-      <div class="feats">
-        <span class="feat">변동레그 PV</span><span class="feat">고정레그 PV</span>
-        <span class="feat">위험회피 효과성</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/irs.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=irs" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- CARD-INSERT:valuation -->
-    <div class="tcard tcard-placeholder" style="grid-column:1/-1">
-      <div style="font-size:.86rem;font-weight:600">더 많은 평가 도구가<br>계속 추가됩니다</div>
+    </div>
+    <div class="grid">
+      <!-- RCPS · DCF -->
+      <article class="card" data-reveal data-step="0">
+        <div class="card-top"><div class="badge-sq">V</div><div class="card-tag mono">상환전환우선주 / 현금흐름할인</div></div>
+        <div><h3>RCPS · DCF 평가</h3></div>
+        <p>상환전환우선주(RCPS)·전환사채 등 복합금융상품과 사업가치의 공정가치를 K-IFRS 1109 기준으로 평가합니다. 변동성·할인율·시나리오까지 한 번에.</p>
+        <div class="chips"><span class="chip">계약조건 입력</span><span class="chip">변동성 산출</span><span class="chip">DCF·WACC</span><span class="chip">4개 평가모형</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/rcps.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <!-- IRS -->
+      <article class="card" data-reveal data-step="1">
+        <div class="card-top"><div class="badge-sq">V</div><div class="card-tag mono">이자율스왑 · 위험회피</div></div>
+        <div><h3>IRS 평가</h3></div>
+        <p>이자율스왑(IRS)의 공정가치를 평가하고, 위험회피회계 적용을 위한 효과성을 검증합니다. 변동·고정 레그 현재가치를 자동 계산.</p>
+        <div class="chips"><span class="chip">변동레그 PV</span><span class="chip">고정레그 PV</span><span class="chip">위험회피 효과성</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/irs.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=irs" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <!-- placeholder -->
+      <article class="card placeholder" data-reveal data-step="2">더 많은 평가 도구가<br />계속 추가됩니다</article>
     </div>
   </div>
 </section>
 
-<!-- 감사보조 -->
-<section class="section wrap" id="audit">
-  <div class="cat-label">
-    <span class="swatch" style="background:linear-gradient(135deg,#7C3AED,#5B21B6)"></span>
-    감사보조 <span class="en">Audit Support</span>
-  </div>
-  <div class="tool-grid">
-    <!-- JET -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>JET 분개 테스트<span class="en">Journal Entry Test · ISA 240</span></h3>
+<!-- ============================ 감사보조 ============================ -->
+<section class="tool-section" id="audit">
+  <div class="wrap">
+    <div class="tool-head" data-reveal>
+      <div>
+        <div class="eyebrow">감사보조 · Audit Support</div>
+        <h2>놓치기 쉬운 징후를 빠짐없이</h2>
       </div>
-      <p class="desc">전체 분개를 자동으로 훑어 부정위험 징후가 있는 전표를 골라냅니다. 결산일 인접·주말 입력·라운드 넘버 등 12종 룰을 한 번에 적용.</p>
-      <div class="feats">
-        <span class="feat">12종 룰셋</span><span class="feat">한국 공휴일</span>
-        <span class="feat">컬럼 자동매핑</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/jet.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- CC -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>CC 채권채무조회서<span class="en">조회 표본추출 · 회수관리</span></h3>
-      </div>
-      <p class="desc">채권·채무 잔액에서 조회 대상을 표본추출하고, 발송 목록과 회신 회수 현황을 관리합니다. 거래처명 정규화로 중복을 자동 정리.</p>
-      <div class="feats">
-        <span class="feat">표본추출</span><span class="feat">발송 목록</span>
-        <span class="feat">회수 관리</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/cc.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=cc-sampling" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- BC -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>BC 금융기관조회서<span class="en">은행조회 · 4150 조서</span></h3>
-      </div>
-      <p class="desc">총계정원장에서 금융기관을 추출해 4150 조서를 자동 작성합니다. 회신 PDF를 읽어 잔액을 대사하고, 원본 양식을 그대로 보존합니다.</p>
-      <div class="feats">
-        <span class="feat">금융기관 추출</span><span class="feat">회신 PDF 파싱</span>
-        <span class="feat">원본 양식 보존</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/bc.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=bc-confirmation" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- Risk Tool -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>Risk Tool<span class="en">감사대상기업 리스크 체크 · Pre-Audit Risk</span></h3>
-      </div>
-      <p class="desc">회사명만 넣으면 DART에서 재무·공시를 자동으로 가져와 감사 착수 전 위험을 4축으로 스크리닝하고 ISA 315 위험평가 조서까지 만들어 줍니다.</p>
-      <div class="feats"><span class="feat">DART 5개년 자동수집</span><span class="feat">4축 위험 신호등</span><span class="feat">ISA 315 위험평가 조서 자동생성</span></div>
-      <div class="actions">
-        <a class="a-guide" href="guide/risk.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- IFRS18 컨버전 툴 -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>IFRS18 컨버전 툴<span class="en">K-IFRS 1118 Statement Converter</span></h3>
-      </div>
-      <p class="desc">현행 손익계산서를 K-IFRS 제1118호(IFRS 18) 양식으로 재구성합니다. 영업·투자·재무 3범주 분류와 의무소계, 분류근거 조서를 자동 생성합니다.</p>
-      <div class="feats"><span class="feat">영업·투자·재무 3범주 자동분류</span><span class="feat">의무소계 2개 산출·비교재작성</span><span class="feat">분류근거 감사조서·MPM 조정표</span></div>
-      <div class="actions">
-        <a class="a-guide" href="guide/ifrs18.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- IFRS16 리스 계산기 -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-a">A</div>
-        <h3>IFRS16 리스 계산기<span class="en">K-IFRS 1116 Lease Calculator</span></h3>
-        <span style="margin-left:auto;align-self:flex-start;font-size:.7rem;font-weight:700;color:#B45309;background:#FFFBEB;border:1px solid #FDE68A;border-radius:100px;padding:.2rem .6rem;white-space:nowrap">개발중</span>
-      </div>
-      <p class="desc">리스 계약 포트폴리오의 사용권자산·리스부채를 K-IFRS 제1116호(IFRS 16)에 따라 산출합니다. 최초인식부터 재측정·면제까지 전체 기간 상각표와 감사조서를 자동 생성합니다.</p>
-      <div class="feats"><span class="feat">사용권자산·리스부채 최초인식 + 전체 상각표</span><span class="feat">지수연동·리스변경·범위축소·조기종료 재측정</span><span class="feat">단기·소액 면제 포함 포트폴리오 감사조서</span></div>
-      <div class="actions">
-        <a class="a-guide" href="guide/ifrs16.html">설명서 보기</a>
-        <span class="a-open" style="opacity:.45;cursor:not-allowed;pointer-events:none" title="개발 중입니다">개발중</span>
-      </div>
-    </article>
-    <!-- CARD-INSERT:audit -->
-    <div class="tcard tcard-placeholder" style="grid-column:1/-1">
-      <div style="font-size:.86rem;font-weight:600">더 많은 감사보조 도구가<br>계속 추가됩니다</div>
+    </div>
+    <div class="grid">
+      <article class="card" data-reveal data-step="0">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">Journal Entry Test</div></div>
+        <div><h3>JET</h3><div class="ttl-en">ISA 240</div></div>
+        <p>전체 분개를 자동으로 훑어 부정위험 징후가 있는 전표를 골라냅니다. 결산일 인접·주말 입력·라운드 넘버 등 15종 룰을 한 번에 적용.</p>
+        <div class="chips"><span class="chip">15종 룰셋</span><span class="chip">한국 공휴일</span><span class="chip">컬럼 자동매핑</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/jet.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="1">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">조회 표본추출 · 회수관리</div></div>
+        <div><h3>CC 채권채무조회서</h3></div>
+        <p>채권·채무 잔액에서 조회 대상을 표본추출하고, 발송 목록과 회신 회수 현황을 관리합니다. 거래처명 정규화로 중복을 자동 정리.</p>
+        <div class="chips"><span class="chip">표본추출</span><span class="chip">발송 목록</span><span class="chip">회수 관리</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/cc.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=cc-sampling" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="2">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">은행조회 조서</div></div>
+        <div><h3>BC 금융기관조회서</h3></div>
+        <p>총계정원장에서 금융기관을 추출해 은행조회 조서를 자동 작성합니다. 회신 PDF를 읽어 잔액을 대사하고, 원본 양식을 그대로 보존합니다.</p>
+        <div class="chips"><span class="chip">금융기관 추출</span><span class="chip">회신 PDF 파싱</span><span class="chip">원본 양식 보존</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/bc.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=bc-confirmation" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="0">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">감사대상기업 리스크 체크</div></div>
+        <div><h3>Risk Tool</h3><div class="ttl-en">Pre-Audit Risk</div></div>
+        <p>회사명만 넣으면 DART에서 재무·공시를 자동으로 가져와 감사 착수 전 위험을 4축으로 스크리닝하고 ISA 315 위험평가 조서까지 만들어 줍니다.</p>
+        <div class="chips"><span class="chip">DART 5개년 자동수집</span><span class="chip">4축 위험 신호등</span><span class="chip">ISA 315 조서 자동생성</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/risk.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="1">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">K-IFRS 1118 Statement Converter</div></div>
+        <div><h3>IFRS18 컨버전 툴</h3></div>
+        <p>현행 손익계산서를 K-IFRS 제1118호(IFRS 18) 양식으로 재구성합니다. 영업·투자·재무 3범주 분류와 의무소계, 분류근거 조서를 자동 생성합니다.</p>
+        <div class="chips"><span class="chip">3범주 자동분류</span><span class="chip">의무소계 2개 산출</span><span class="chip">MPM 조정표</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/ifrs18.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="2">
+        <div class="card-top"><div class="badge-sq">A</div><div class="card-tag mono">K-IFRS 1116 Lease Calculator</div></div>
+        <div><h3>IFRS16 리스 계산기</h3></div>
+        <p>리스 계약 포트폴리오의 사용권자산·리스부채를 K-IFRS 제1116호(IFRS 16)에 따라 산출합니다. 최초인식부터 재측정·면제까지 전체 기간 상각표와 감사조서를 자동 생성합니다.</p>
+        <div class="chips"><span class="chip">최초인식 + 전체 상각표</span><span class="chip">재측정</span><span class="chip">포트폴리오 감사조서</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/ifrs16.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=ifrs16" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- 리서치 -->
-<section class="section wrap" id="reference">
-  <div class="cat-label">
-    <span class="swatch" style="background:linear-gradient(135deg,#00C2B3,#0E9F8E)"></span>
-    리서치 <span class="en">Reference</span>
-  </div>
-  <div class="tool-grid">
-    <!-- 회계 AI -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-r">R</div>
-        <h3>회계기준 AI<span class="en">K-IFRS · 일반기업회계기준 질의응답</span></h3>
+<!-- ============================ 리서치 ============================ -->
+<section class="tool-section" id="reference">
+  <div class="wrap">
+    <div class="tool-head" data-reveal>
+      <div>
+        <div class="eyebrow">리서치 · Reference</div>
+        <h2>근거와 출처로 다시 확인</h2>
       </div>
-      <p class="desc">회계처리가 헷갈릴 때 질문하면, 관련 기준과 출처를 웹에서 찾아 조문·근거와 함께 답합니다. 일반 챗봇과 달리 검색 근거에 기반합니다.</p>
-      <div class="feats">
-        <span class="feat">근거 기반 답변</span><span class="feat">조문 인용</span>
-        <span class="feat">출처 표기</span>
-      </div>
-      <div class="actions">
-        <a class="a-guide" href="guide/accounting.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=accounting-ai" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- 감사·윤리기준 AI -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-r">R</div>
-        <h3>감사·윤리기준 AI<span class="en">감사기준 · 윤리 · 공인회계사법/외부감사법 질의응답</span></h3>
-      </div>
-      <p class="desc">회계감사기준(KSA·ISA)·공인회계사 윤리기준·관련 법령을 자연어로 묻고, 근거 조문과 유관기관 질의회신 출처까지 받아보는 리서치 도구.</p>
-      <div class="feats"><span class="feat">감사·윤리·법령 통합 질의응답</span><span class="feat">근거 조문·질의회신 출처 링크</span><span class="feat">빠른답변/정밀검색 모드</span></div>
-      <div class="actions">
-        <a class="a-guide" href="guide/audit.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=audit-ai" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- 세무 AI -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-r">R</div>
-        <h3>세무 AI<span class="en">Korean Tax Q&A</span></h3>
-      </div>
-      <p class="desc">법인세·소득세·부가가치세 등 한국 세법 질문에 조문·예규·심판례 근거로 답하는 세무 질의응답 도구입니다. 세목별 관점 고정과 정밀검색 출처 링크를 지원합니다.</p>
-      <div class="feats"><span class="feat">세목별 관점(법인세·소득·양도·부가세)</span><span class="feat">빠른답변 / 정밀검색(출처 URL) 모드</span><span class="feat">조문·예규·조세심판례 근거 인용</span></div>
-      <div class="actions">
-        <a class="a-guide" href="guide/tax.html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- CARD-INSERT:reference -->
-    <div class="tcard tcard-placeholder">
-      <div style="font-size:.86rem;font-weight:600">더 많은 리서치 도구가<br>계속 추가됩니다</div>
+    </div>
+    <div class="grid">
+      <article class="card" data-reveal data-step="0">
+        <div class="card-top"><div class="badge-sq">R</div><div class="card-tag mono">K-IFRS · 일반기업회계기준 질의응답</div></div>
+        <div><h3>회계기준 AI</h3></div>
+        <p>회계처리가 헷갈릴 때 질문하면, 관련 기준과 출처를 웹에서 찾아 조문·근거와 함께 답합니다. 일반 챗봇과 달리 검색 근거에 기반합니다.</p>
+        <div class="chips"><span class="chip">근거 기반 답변</span><span class="chip">조문 인용</span><span class="chip">출처 표기</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/accounting.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=accounting-ai" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="1">
+        <div class="card-top"><div class="badge-sq">R</div><div class="card-tag mono">감사기준 · 윤리 · 공인회계사법/외부감사법</div></div>
+        <div><h3>감사·윤리기준 AI</h3></div>
+        <p>회계감사기준(KSA·ISA)·공인회계사 윤리기준·관련 법령을 자연어로 묻고, 근거 조문과 유관기관 질의회신 출처까지 받아보는 리서치 도구.</p>
+        <div class="chips"><span class="chip">감사·윤리·법령 통합</span><span class="chip">근거 조문·질의회신</span><span class="chip">빠른답변/정밀검색</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/audit.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=audit-ai" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
+      <article class="card" data-reveal data-step="2">
+        <div class="card-top"><div class="badge-sq">R</div><div class="card-tag mono">Korean Tax Q&amp;A</div></div>
+        <div><h3>세무 AI</h3></div>
+        <p>법인세·소득세·부가가치세 등 한국 세법 질문에 조문·예규·심판례 근거로 답하는 세무 질의응답 도구입니다. 세목별 관점 고정과 정밀검색 출처 링크를 지원합니다.</p>
+        <div class="chips"><span class="chip">세목별 관점</span><span class="chip">빠른답변/정밀검색</span><span class="chip">조문·예규·심판례</span></div>
+        <div class="card-links">
+          <a class="lnk" href="guide/tax.html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기 <span class="arr">→</span></a>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- 왜 WAT -->
-<section class="section wrap">
-  <div class="section-head">
-    <div class="kicker">Why WAT</div>
-    <h2>현업 감사인이 직접 만들었습니다</h2>
-    <p>실무에서 매번 반복하던 작업을, 기준에 맞게 자동화했습니다.</p>
-  </div>
-  <div class="std-grid">
-    <div class="std">
-      <h4>기준에 충실</h4>
-      <p>K-IFRS 1109·ISA 240·감사기준서 등 실제 기준을 반영해 결과의 근거를 명확히 합니다.</p>
+<!-- ============================ 신뢰 밴드 (다크, 카운트업) ============================ -->
+<section class="band">
+  <div class="wrap">
+    <div data-reveal>
+      <div class="eyebrow">By the numbers</div>
+      <h2>현업 감사인이 직접 만들었습니다</h2>
+      <p class="sub">실무에서 매번 반복하던 작업을, 기준에 맞게 자동화했습니다.</p>
     </div>
-    <div class="std">
-      <h4>원본을 지킵니다</h4>
-      <p>조서·양식의 원본 서식을 그대로 보존하면서 값만 채워, 그대로 제출·검토할 수 있습니다.</p>
+    <div class="band-stats">
+      <div class="bstat" data-reveal data-step="0"><div class="num tnum" data-count="5">0<span class="suf">개년</span></div><div class="lbl">DART 재무·공시<br />자동 수집</div></div>
+      <div class="bstat" data-reveal data-step="1"><div class="num tnum" data-count="4">0<span class="suf">축</span></div><div class="lbl">Pre-Audit 위험<br />스크리닝</div></div>
+      <div class="bstat" data-reveal data-step="2"><div class="num tnum" data-count="5">0<span class="suf">+</span></div><div class="lbl">반영 K-IFRS·ISA<br />기준</div></div>
+      <div class="bstat" data-reveal data-step="3"><div class="num tnum" data-count="3">0<span class="suf">종</span></div><div class="lbl">회계·감사·세무<br />지식 AI</div></div>
     </div>
-    <div class="std">
-      <h4>설명서가 친절합니다</h4>
-      <p>각 도구마다 "누가·언제·어떻게"를 단계별로 안내해, 비전공자도 바로 따라 할 수 있습니다.</p>
+    <div class="band-badges" data-reveal data-step="4">
+      <span class="b mono">K-IFRS 1109</span>
+      <span class="b mono">ISA 240</span>
+      <span class="b mono">ISA 315</span>
+      <span class="b mono">K-IFRS 1116</span>
+      <span class="b mono">K-IFRS 1118</span>
     </div>
   </div>
 </section>
 
-<footer class="legal">
-  <div class="inner">
-    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
-    <span class="right">© 2026 Woongcpa</span>
+<!-- ============================ WHY WAT ============================ -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div class="eyebrow">Why WAT</div>
+      <h2>판단은 사람이, 반복은 도구가</h2>
+    </div>
+    <div class="why">
+      <div class="item" data-reveal data-step="0">
+        <div class="n">01</div>
+        <h4>기준에 충실</h4>
+        <p>K-IFRS 1109·ISA 240·감사기준서 등 실제 기준을 반영해 결과의 근거를 명확히 합니다.</p>
+      </div>
+      <div class="item" data-reveal data-step="1">
+        <div class="n">02</div>
+        <h4>원본을 지킵니다</h4>
+        <p>조서·양식의 원본 서식을 그대로 보존하면서 값만 채워, 그대로 제출·검토할 수 있습니다.</p>
+      </div>
+      <div class="item" data-reveal data-step="2">
+        <div class="n">03</div>
+        <h4>설명서가 친절합니다</h4>
+        <p>각 도구마다 "누가·언제·어떻게"를 단계별로 안내해, 비전공자도 바로 따라 할 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="disc"><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</div>
+    <div class="cr">© 2026 Woongcpa</div>
   </div>
 </footer>
 
+<!-- =========================================================================
+     모션 엔진 — 의존성 없는 바닐라 JS
+     · 스크롤 리빌 (IntersectionObserver + data-step 스태거)
+     · 숫자 카운트업 (data-count, data-step으로 시작 순서)
+     · prefers-reduced-motion 자동 존중
+     아래 MOTION 프리셋 한 줄만 바꾸면 절제/균형/활기 강도가 전환됩니다.
+-->
+<script>
+(function(){
+  "use strict";
+
+  /* ── 모션 강도 프리셋 ─────────────────────────────────
+     'subtle'  : 절제 — 작게 떠오름, 차분한 전문가 톤 (기본)
+     'balanced': 균형 — 적당한 이동·스태거
+     'kinetic' : 활기 — 큰 이동·빠른 카운트업                         */
+  var MOTION = "subtle";
+
+  var PRESET = {
+    subtle:   { dist:14, dur:680, stagger:70,  scale:1,    count:1100 },
+    balanced: { dist:26, dur:740, stagger:95,  scale:.99,  count:1400 },
+    kinetic:  { dist:44, dur:820, stagger:130, scale:.965, count:1750 }
+  };
+  var cfg = PRESET[MOTION] || PRESET.subtle;
+  var EASE = "cubic-bezier(.22,.61,.36,1)";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── 1) 스크롤 리빌 ───────────────────────────────── */
+  var reveals = [].slice.call(document.querySelectorAll("[data-reveal]"));
+  reveals.forEach(function(el){
+    if(reduce){ el.style.opacity=1; return; }
+    var step = parseInt(el.getAttribute("data-step")||"0",10);
+    el.style.transform = "translateY("+cfg.dist+"px) scale("+cfg.scale+")";
+    el.style.transition = "opacity "+cfg.dur+"ms "+EASE+", transform "+cfg.dur+"ms "+EASE;
+    el.style.transitionDelay = (step*cfg.stagger)+"ms";
+  });
+  if(reduce){ reveals.forEach(function(el){ el.style.opacity=1; el.style.transform="none"; }); }
+
+  /* ── 2) 숫자 카운트업 ─────────────────────────────── */
+  function formatNum(el, v){
+    // 숫자 노드만 갱신 (접두/접미 <span>은 그대로 유지)
+    var suf = el.querySelector(".suf");
+    var sufHTML = suf ? suf.outerHTML : "";
+    el.innerHTML = Math.round(v).toLocaleString("ko-KR") + sufHTML;
+  }
+  var counters = [].slice.call(document.querySelectorAll("[data-count]"));
+  function runCount(el){
+    var target = parseFloat(el.getAttribute("data-count"))||0;
+    if(reduce){ formatNum(el, target); return; }
+    var start = null, ease = function(t){ return 1-Math.pow(1-t,3); };
+    function tick(now){
+      if(start===null) start = now;
+      var p = Math.min(1,(now-start)/cfg.count);
+      formatNum(el, target*ease(p));
+      if(p<1) requestAnimationFrame(tick); else formatNum(el, target);
+    }
+    requestAnimationFrame(tick);
+  }
+  if(reduce){ counters.forEach(function(el){ runCount(el); }); }
+
+  /* ── 통합 스크롤 드라이버 (IntersectionObserver 비의존) ──
+     일부 환경에서 IntersectionObserver가 통하지 않아, getBoundingClientRect로
+     직접 가시성을 계산해 로드 즉시 + 스크롤 시 드러냅니다. */
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  function near(el, pad){
+    var r = el.getBoundingClientRect();
+    return r.top < vh() - pad && r.bottom > 0;
+  }
+  function check(){
+    if(reduce) return;
+    reveals.forEach(function(el){
+      if(el.__shown) return;
+      if(near(el, 40)){ el.__shown = true; el.style.opacity="1"; el.style.transform="none"; }
+    });
+    counters.forEach(function(el){
+      if(el.__counted) return;
+      if(near(el, 0)){ el.__counted = true; runCount(el); }
+    });
+  }
+  check();
+  window.addEventListener("scroll", check, { passive:true });
+  window.addEventListener("resize", check);
+  window.addEventListener("load", check);
+  setTimeout(check, 60);
+  setTimeout(check, 300);
+
+  /* ── 3) 헤더 스크롤 상태 ──────────────────────────── */
+  var hdr = document.getElementById("hdr");
+  var onScroll = function(){ hdr.classList.toggle("scrolled", window.scrollY>8); };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive:true });
+})();
+</script>
+
+<!-- VAR 섹션 — 심판 네모 드로잉 + 순차 스탬프 + 자동 스포트라이트 -->
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stage = document.getElementById("varStage");
+  var svg   = document.getElementById("varDraw");
+  if(!stage || !svg) return;
+  var right = svg.querySelector(".right");
+  var left  = svg.querySelector(".left");
+  var cards = [].slice.call(stage.querySelectorAll(".var-card"));
+
+  function buildPaths(){
+    var w = svg.clientWidth, h = svg.clientHeight;
+    var p = 2, r = 24;
+    var x0=p, y0=p, x1=w-p, y1=h-p, cx=(x0+x1)/2;
+    var dR = "M "+cx+" "+y0+" L "+(x1-r)+" "+y0+" Q "+x1+" "+y0+" "+x1+" "+(y0+r)+" L "+x1+" "+(y1-r)+" Q "+x1+" "+y1+" "+(x1-r)+" "+y1+" L "+cx+" "+y1;
+    var dL = "M "+cx+" "+y0+" L "+(x0+r)+" "+y0+" Q "+x0+" "+y0+" "+x0+" "+(y0+r)+" L "+x0+" "+(y1-r)+" Q "+x0+" "+y1+" "+(x0+r)+" "+y1+" L "+cx+" "+y1;
+    right.setAttribute("d", dR); left.setAttribute("d", dL);
+    right.style.setProperty("--len", right.getTotalLength());
+    left.style.setProperty("--len", left.getTotalLength());
+  }
+
+  var ci=0, timer=null, INTERVAL=3000;
+  function focus(i){ cards.forEach(function(c,n){ c.classList.toggle("active", n===i); }); ci=i; }
+  function startSpot(){ if(reduce) return; stopSpot(); timer=setInterval(function(){ focus((ci+1)%cards.length); }, INTERVAL); }
+  function stopSpot(){ if(timer){ clearInterval(timer); timer=null; } }
+
+  var seqTimers=[];
+  function clearSeq(){ seqTimers.forEach(clearTimeout); seqTimers=[]; }
+  function play(){
+    clearSeq(); stopSpot();
+    cards.forEach(function(c){ c.classList.remove("active"); });
+    stage.classList.remove("built");
+    if(reduce){ svg.classList.add("draw"); stage.classList.add("built"); focus(0); return; }
+    buildPaths();
+    svg.classList.remove("draw");
+    void svg.getBoundingClientRect();
+    svg.classList.add("draw");
+    seqTimers.push(setTimeout(function(){ stage.classList.add("built"); }, 900));
+    seqTimers.push(setTimeout(function(){ focus(0); startSpot(); }, 1850));
+  }
+
+  cards.forEach(function(c,n){
+    c.addEventListener("mouseenter", function(){ if(stage.classList.contains("built")){ stopSpot(); focus(n); } });
+    c.addEventListener("mouseleave", function(){ if(stage.classList.contains("built")) startSpot(); });
+  });
+  stage.style.cursor="pointer";
+  stage.addEventListener("click", play);
+
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  var started=false;
+  function check(){
+    if(started) return;
+    var rct=stage.getBoundingClientRect();
+    if(rct.top < vh()*0.82 && rct.bottom > 0){ started=true; play(); }
+  }
+  var ro=("ResizeObserver" in window)? new ResizeObserver(function(){ if(started) buildPaths(); }) : null;
+  if(ro) ro.observe(stage);
+  check();
+  window.addEventListener("scroll", check, {passive:true});
+  window.addEventListener("resize", check);
+  window.addEventListener("load", function(){ buildPaths(); check(); });
+  setTimeout(check, 120);
+})();
+</script>
 </body>
 </html>

@@ -1,119 +1,411 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>IFRS18 컨버전 툴 설명서 · WAT</title>
-<meta name="description" content="IFRS18 컨버전 툴 도구 사용설명서.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EA%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../styles.css">
+<meta name="description" content="K-IFRS 1118 손익 3범주 재구성 도구 사용설명서. 영업·투자·재무 분류, 의무소계, 분류근거 조서 자동생성." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --ink:#11151B; --muted:#5B6470; --faint:#8A93A0;
+  --line:#E7EAEF; --accent:#2B5FD9;
+  --accent-soft:color-mix(in oklab,var(--accent) 8%,#fff);
+  --accent-line:color-mix(in oklab,var(--accent) 22%,#fff);
+  --dark:#0F1320;
+  --radius:16px; --maxw:920px; --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500;}
+
+html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
+@media (prefers-reduced-motion:reduce){html.js [data-reveal]{opacity:1!important;transform:none!important;}}
+
+.hdr{position:sticky;top:0;z-index:50;background:color-mix(in oklab,var(--bg) 80%,transparent);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;}
+.hdr.scrolled{border-bottom-color:var(--line);background:color-mix(in oklab,var(--bg) 92%,transparent);}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:64px;max-width:1100px;}
+.brand{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;}
+.brand b{font-size:20px;}
+.brand span{font-size:11px;color:var(--faint);letter-spacing:.04em;}
+.nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.nav a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);font-weight:500;transition:color .2s,background .2s;}
+.nav a:hover{color:var(--ink);background:color-mix(in oklab,var(--ink) 5%,transparent);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;transition:transform .15s var(--ease),background .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(16,21,40,.12);}
+.btn:hover{background:color-mix(in oklab,var(--accent) 88%,#000);transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in oklab,var(--accent) 32%,transparent);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none;}
+.btn.ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);transform:translateY(-1px);}
+.btn.sm{padding:8px 14px;font-size:13px;}
+.btn.dark{background:var(--ink);color:#fff;box-shadow:none;}
+.btn.dark .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transition:transform .2s;}
+.btn.dark:hover{background:color-mix(in oklab,var(--ink) 90%,var(--accent));transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,21,40,.16);}
+.btn.dark:hover .dot{transform:scale(1.3);}
+
+.crumb{padding:30px 0 0;font-size:13px;color:var(--faint);}
+.crumb a{color:var(--muted);}
+.crumb a:hover{color:var(--accent);}
+.crumb .sep{margin:0 8px;color:var(--line);}
+.ghero{position:relative;overflow:hidden;padding:26px 0 46px;border-bottom:1px solid var(--line);}
+.ghero-glow{position:absolute;inset:-30% -10% auto -10%;height:420px;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 58% at 78% 8%, color-mix(in oklab,var(--accent) 11%,transparent), transparent 68%),
+    radial-gradient(46% 46% at 6% 0%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 70%);
+  animation:ghero-drift 18s ease-in-out infinite alternate;}
+@keyframes ghero-drift{from{transform:translate3d(0,0,0);}to{transform:translate3d(0,-16px,0);}}
+.ghero > *{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12px;color:var(--muted);font-weight:500;}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;
+  box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 60%,transparent);animation:ghero-pulse 2.4s infinite;}
+@keyframes ghero-pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 50%,transparent);}70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+.ghero .kicker{font-size:64px;font-weight:800;line-height:.9;letter-spacing:-.04em;color:var(--accent);opacity:.14;margin-bottom:6px;}
+.ghero h1{margin:0 0 6px;font-size:clamp(30px,4.4vw,46px);line-height:1.14;letter-spacing:-.03em;font-weight:800;text-wrap:balance;}
+.ghero h1 .hl{color:var(--accent);}
+.ghero .subt{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.ghero .subt .std{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:6px;padding:3px 9px;margin-left:6px;}
+.ghero .lede{font-size:17px;color:var(--ink);max-width:60ch;line-height:1.7;margin:0 0 26px;}
+.ghero .lede b{color:var(--accent);}
+.tnum{font-variant-numeric:tabular-nums;}
+.gstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:36px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.gstat{background:var(--surface);padding:22px 22px;}
+.gstat .num{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+.gstat .num.mono{font-family:"JetBrains Mono",monospace;color:var(--accent);}
+.gstat .lbl{margin-top:9px;font-size:12.5px;color:var(--muted);line-height:1.45;}
+.ghero-cta{display:flex;flex-wrap:wrap;gap:12px;}
+
+.gsec{padding:54px 0;border-bottom:1px solid var(--line);}
+.gsec:last-of-type{border-bottom:none;}
+.gsec-head{margin-bottom:30px;}
+.gsec-head .eyebrow{display:block;margin-bottom:12px;}
+.gsec-head h2{margin:0;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.025em;font-weight:800;line-height:1.2;}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;font-size:14.5px;color:var(--ink);line-height:1.55;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.check:hover{transform:translateY(-2px);border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.check .ck{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px;}
+
+.concepts{display:grid;gap:16px;}
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;
+  transition:border-color .25s,box-shadow .25s;}
+.concept:hover{border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.concept h3{margin:0 0 10px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.concept h3::before{content:"Q ";color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:600;}
+.concept p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.concept p b{color:var(--ink);}
+.formula{margin-top:18px;background:var(--dark);color:#fff;border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:15px;letter-spacing:.01em;text-align:center;}
+.formula .op{color:color-mix(in oklab,var(--accent) 55%,#fff);}
+
+.prep{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--radius);padding:24px 28px;}
+.prep .ph{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:14px;}
+.prep ul{margin:0;padding-left:0;list-style:none;display:grid;gap:10px;}
+.prep li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink);line-height:1.6;}
+.prep li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+.steps{display:grid;gap:0;}
+.step{position:relative;display:grid;grid-template-columns:auto 1fr;gap:22px;padding:22px 0;}
+.step:not(:last-child){border-bottom:1px dashed var(--line);}
+.step .sn{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;color:var(--accent);
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--accent-line);background:var(--surface);
+  display:grid;place-items:center;flex:none;}
+.step h3{margin:0 0 8px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.step p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.step .tip{margin-top:10px;font-size:13px;color:var(--accent);background:var(--accent-soft);
+  border-left:2px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;}
+.step p b,.step h3 .tab{color:var(--ink);}
+.tab{font-family:"Pretendard Variable",Pretendard,sans-serif;font-weight:600;font-size:.92em;letter-spacing:.01em;
+  background:color-mix(in oklab,var(--ink) 5%,transparent);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;}
+
+.outs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.out:hover{transform:translateY(-3px);border-color:var(--accent-line);box-shadow:0 12px 30px rgba(16,21,40,.07);}
+.out h3{margin:0 0 6px;font-size:15.5px;font-weight:700;}
+.out p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
+
+.faq{display:grid;gap:10px;}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .25s;}
+.faq details[open]{border-color:var(--accent-line);}
+.faq summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:12px;color:var(--ink);}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary .qx{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:14px;font-weight:800;transition:transform .3s var(--ease),background .25s,color .25s;}
+.faq details[open] summary .qx{transform:rotate(45deg);background:var(--accent);color:#fff;}
+.faq .ans{padding:0 22px 20px 56px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+.cta-band{background:var(--dark);color:#fff;position:relative;overflow:hidden;border-radius:var(--radius);margin:54px 0;}
+.cta-band::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 80% at 85% 0%,color-mix(in oklab,var(--accent) 30%,transparent),transparent 65%);pointer-events:none;}
+.cta-band .in{position:relative;z-index:1;padding:42px 44px;}
+.cta-band h2{margin:0 0 8px;font-size:clamp(21px,2.6vw,28px);font-weight:800;letter-spacing:-.02em;}
+.cta-band p{margin:0 0 22px;color:#9aa3b4;font-size:15px;}
+
+.related{padding:46px 0 10px;}
+.related .eyebrow{margin-bottom:18px;display:block;}
+.rel-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.rel-grid a{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:9px 16px;transition:color .2s,border-color .2s,transform .15s;}
+.rel-grid a:hover{color:var(--accent);border-color:var(--accent-line);transform:translateY(-1px);}
+
+.foot{border-top:1px solid var(--line);padding:40px 0;margin-top:30px;}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;}
+.foot .disc{font-size:12.5px;color:var(--faint);line-height:1.6;white-space:nowrap;}
+.foot .disc b{color:var(--muted);}
+.foot .cr{font-size:12.5px;color:var(--faint);}
+
+@media (max-width:720px){
+  .checks,.outs{grid-template-columns:1fr;}
+  .nav a:not(.btn){display:none;}
+  .foot .disc{white-space:normal;}
+}
+</style>
 </head>
 <body>
+<script>document.documentElement.className+=" js";</script>
 
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
-    <div class="nav-links">
-      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
-      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기</a>
-    </div>
-  </div>
-</nav>
-
-<header class="wrap g-hero">
-  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · IFRS18 컨버전 툴</div>
-  <div class="g-top">
-    <div><h1>IFRS18 컨버전 툴<span class="en">K-IFRS 1118 Statement Converter</span></h1></div>
-  </div>
-  <p class="g-lead">K-IFRS 제1118호는 2027년부터 손익계산서를 영업·투자·재무 세 범주로 나누고, 영업이익과 재무·법인세차감전이익이라는 의무소계를 새로 요구합니다. 이 도구는 회사의 현행 손익계산서나 시산표를 받아 새 양식으로 자동 재구성하고, 어느 계정을 왜 어느 범주에 넣었는지 근거를 남긴 감사조서까지 만들어 줍니다. 판단이 필요한 부분은 신뢰도를 표시해 사용자가 직접 확정하게 합니다.</p>
-  <div class="g-cta">
-    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 →</a>
-    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>WAT</b><span>Woongcpa's Audit Tools</span></a>
+    <nav class="nav">
+      <a href="../index.html#valuation">평가</a>
+      <a href="../index.html#audit">감사보조</a>
+      <a href="../index.html#reference">리서치</a>
+      <a class="btn sm dark" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener"><span class="dot"></span>도구 바로가기</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap g-body">
+<div class="wrap">
+  <nav class="crumb">
+    <a href="../index.html">WAT</a><span class="sep">/</span>
+    <a href="../index.html#audit">감사보조</a><span class="sep">/</span>
+    IFRS18 컨버전 툴
+  </nav>
 
-  <section class="g-block">
-    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
-    <div class="who">
-      <div class="item"><span class="chk">✓</span> 2027년 IFRS 18 도입을 준비하는 결산·재무팀</div>
-      <div class="item"><span class="chk">✓</span> 전환 영향을 미리 점검해야 하는 외부감사인</div>
-      <div class="item"><span class="chk">✓</span> 비교표시 소급재작성이 필요한 상장·외감기업 실무자</div>
-      <div class="item"><span class="chk">✓</span> 조정영업이익 등 경영자정의지표(MPM)를 공시해야 하는 IR·공시 담당</div>
+  <section class="ghero">
+    <span class="ghero-glow" aria-hidden="true"></span>
+    <div class="hero-badge" data-reveal data-step="0"><i></i> 감사보조 · Audit</div>
+    <div class="kicker" data-reveal data-step="1">A</div>
+    <h1 data-reveal data-step="2">IFRS18 컨버전 툴</h1>
+    <div class="subt" data-reveal data-step="3">손익 3범주 재구성</div>
+    <p class="lede" data-reveal data-step="4">회사의 현행 손익계산서를 <b>K-IFRS 1118호(IFRS 18) 양식</b>으로 자동 재구성합니다.
+       영업·투자·재무 3범주 분류, 의무소계 계산, 그리고 어느 계정을 왜 어느 범주에 넣었는지 <b>근거를 남긴 감사조서</b>까지 한 번에 만들어 줍니다.</p>
+    <div class="ghero-cta" data-reveal data-step="5">
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 바로가기 →</a>
+      <a class="btn ghost" href="../index.html">다른 도구 보기</a>
+    </div>
+
+    <div class="gstats" data-reveal data-step="6">
+      <div class="gstat"><div class="num tnum" data-count="3">0</div><div class="lbl">손익 분류 범주</div></div>
+      <div class="gstat"><div class="num tnum" data-count="2">0</div><div class="lbl">의무소계 항목</div></div>
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">산출 결과물</div></div>
+      <div class="gstat"><div class="num mono">1118</div><div class="lbl">K-IFRS 적용 기준</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
-    <div class="concept">
-      <h4>왜 3범주로 나누나요?</h4>
-      <p>회사마다 제각각이던 '영업이익' 정의를 표준이 통일하기 위해서입니다. 이자비용 같은 재무손익과 지분법·배당 같은 투자손익을 영업에서 떼어내, 어느 회사든 같은 기준의 영업이익을 비교할 수 있게 합니다.</p>
-      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
-    </div>
-    <div class="concept">
-      <h4>꼭 알아둘 용어</h4>
-      <p>의무소계 — 표준이 반드시 표시하라고 정한 합계(영업이익, 재무·법인세차감전이익). MPM — 조정영업이익처럼 회사가 따로 쓰는 성과지표로, 주석에 IFRS 소계와의 차이를 맞춰 보여야 합니다.</p>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">이런 분께 · Who it's for</div><h2>이런 분께 필요합니다</h2></div>
+    <div class="checks">
+      <div class="check" data-reveal data-step="0"><span class="ck">✓</span><div>2027년 K-IFRS 1118 도입을 준비하는 결산·재무팀</div></div>
+      <div class="check" data-reveal data-step="1"><span class="ck">✓</span><div>전환 영향과 계정 분류를 미리 점검해야 하는 외부감사인</div></div>
+      <div class="check" data-reveal data-step="2"><span class="ck">✓</span><div>비교표시 소급재작성이 필요한 상장·외감기업 실무자</div></div>
+      <div class="check" data-reveal data-step="3"><span class="ck">✓</span><div>조정영업이익 등 경영자정의지표(MPM)를 공시해야 하는 IR·공시 담당</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">3</span> 준비물</h2>
-    <div class="prep">
-      <h4>📋 시작 전에 챙겨주세요</h4>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">핵심 개념 · Key concepts</div><h2>미리 알아두면 좋은 개념</h2></div>
+    <div class="concepts">
+      <div class="concept" data-reveal data-step="0">
+        <h3>왜 3범주로 나누나요?</h3>
+        <p>회사마다 제각각이던 '영업이익' 정의를 기준이 통일하기 위해서입니다. 이자비용 같은 <b>재무손익</b>과 지분법·배당 같은 <b>투자손익</b>을 영업에서 떼어내, 어느 회사든 같은 기준의 영업이익을 비교할 수 있게 합니다.</p>
+        <div class="formula">손익계산서 <span class="op">=</span> 영업 <span class="op">+</span> 투자 <span class="op">+</span> 재무</div>
+      </div>
+      <div class="concept" data-reveal data-step="1">
+        <h3>의무소계·MPM이란 무엇인가요?</h3>
+        <p><b>의무소계</b>는 기준이 반드시 표시하라고 정한 합계입니다 — 영업이익과 재무·법인세차감전이익 두 가지입니다. <b>MPM(경영자정의지표)</b>은 조정영업이익처럼 회사가 따로 쓰는 성과지표로, 주석에 IFRS 소계와의 차이를 맞춰 보여야 합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">준비물 · What you need</div><h2>준비물</h2></div>
+    <div class="prep" data-reveal>
+      <div class="ph">📋 시작 전에 챙겨주세요</div>
       <ul>
         <li>현행 손익계산서 또는 시산표 (Excel: 계정과목·당기·전기 컬럼)</li>
-        <li>회사의 주된 영업활동 유형 (일반/투자회사/금융업)</li>
+        <li>회사의 주된 영업활동 유형 (일반·투자회사·금융업 중 선택)</li>
         <li>(선택) 조정영업이익 등 MPM 조정항목·법인세·비지배지분 효과</li>
       </ul>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">사용법 · Step by step</div><h2>이렇게 따라 하세요</h2></div>
     <div class="steps">
-      <div class="step"><h4>1. 입력</h4><p>손익계산서 Excel을 올리거나, 회사명·연도로 DART에서 자동으로 불러옵니다.</p></div>
-      <div class="step"><h4>2. 자동분류</h4><p>계정과목을 영업·투자·재무로 자동 분류하고, 애매한 계정은 '검토필요'로 표시합니다.</p>
-        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
-      <div class="step"><h4>3. 검토·확정</h4><p>표시된 계정의 범주를 직접 확인·수정합니다. 확정한 매핑은 회사별로 저장돼 다음에 재사용됩니다.</p></div>
-      <div class="step"><h4>4. 조서 출력</h4><p>IFRS18 손익계산서·분류근거 로그·(선택)MPM 조정표·현금흐름을 담은 Excel 조서를 내려받습니다.</p></div>
+      <div class="step" data-reveal data-step="0">
+        <div class="sn">01</div>
+        <div>
+          <h3>입력</h3>
+          <p>손익계산서 Excel을 올리거나, 회사명·연도로 DART에서 자동으로 불러옵니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="1">
+        <div class="sn">02</div>
+        <div>
+          <h3>자동 분류</h3>
+          <p>계정과목을 <b>영업·투자·재무</b>로 자동 분류하고, 애매한 계정은 '검토필요'로 표시합니다.</p>
+          <div class="tip">팁: 업종을 금융/투자로 선택하면 이자·지분법손익이 영업으로 재분류됩니다.</div>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="2">
+        <div class="sn">03</div>
+        <div>
+          <h3>검토·확정</h3>
+          <p>분홍색으로 표시된 미확정 계정의 범주를 직접 확인·수정합니다. 확정한 매핑은 회사별로 저장돼 다음에 재사용됩니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="3">
+        <div class="sn">04</div>
+        <div>
+          <h3>조서 출력</h3>
+          <p>IFRS 18 손익계산서·분류근거 로그·(선택) MPM 조정표·영업활동현금흐름 골격을 담은 Excel 조서를 내려받습니다.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">5</span> 무엇이 나오나요</h2>
-    <div class="out">
-      <div class="item"><h4>IFRS18 손익계산서</h4><p>3범주·의무소계·당기/전기 비교표</p></div>
-      <div class="item"><h4>분류근거 로그</h4><p>계정별 범주·근거·신뢰도·수동수정 이력 (감사조서)</p></div>
-      <div class="item"><h4>MPM 조정표</h4><p>조정영업이익 등 → 영업이익 reconciliation, 법인세·비지배지분 효과</p></div>
-      <div class="item"><h4>영업활동현금흐름</h4><p>간접법 시작점을 영업이익으로 재배치한 골격</p></div>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">결과물 · Output</div><h2>무엇이 나오나요</h2></div>
+    <div class="outs">
+      <div class="out" data-reveal data-step="0"><h3>IFRS18 손익계산서</h3><p>3범주·의무소계·당기/전기 비교표</p></div>
+      <div class="out" data-reveal data-step="1"><h3>분류근거 로그</h3><p>계정별 범주·근거·신뢰도·수동수정 이력 (감사조서)</p></div>
+      <div class="out" data-reveal data-step="2"><h3>MPM 조정표</h3><p>조정영업이익 → 영업이익 reconciliation, 법인세·비지배지분 효과</p></div>
+      <div class="out" data-reveal data-step="3"><h3>현금흐름 골격</h3><p>간접법 시작점을 영업이익으로 재배치한 현금흐름 구조</p></div>
     </div>
   </section>
 
-  <section class="g-block faq">
-    <h2><span class="num">6</span> 자주 묻는 질문</h2>
-    <details><summary>자동분류가 다 맞나요?</summary><div class="ans">아니요. 자동분류는 제안일 뿐이며 신뢰도를 함께 표시합니다. 애매하거나 미매칭인 계정은 분홍색으로 강조되며, 최종 범주와 책임은 사용자가 확정합니다.</div></details>
-    <details><summary>은행·보험·투자회사도 되나요?</summary><div class="ans">됩니다. '주된 영업활동'을 금융/투자로 선택하면 이자·지분법손익 등을 영업으로 끌어올리는 분류규칙 전환이 적용됩니다.</div></details>
-    <details><summary>전기 비교표도 만들어 주나요?</summary><div class="ans">네. 당기와 동일한 매핑을 전기에 일관 적용해 소급재작성한 비교표를 함께 산출합니다.</div></details>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">FAQ · 자주 묻는 질문</div><h2>자주 묻는 질문</h2></div>
+    <div class="faq">
+      <details data-reveal data-step="0">
+        <summary><span class="qx">+</span>자동분류가 다 맞나요?</summary>
+        <div class="ans">아니요. 자동분류는 제안일 뿐이며 신뢰도를 함께 표시합니다. 애매하거나 미매칭인 계정은 분홍색으로 강조되며, 최종 범주와 책임은 사용자가 확정합니다.</div>
+      </details>
+      <details data-reveal data-step="1">
+        <summary><span class="qx">+</span>은행·보험·투자회사도 되나요?</summary>
+        <div class="ans">됩니다. '주된 영업활동'을 금융/투자로 선택하면 이자·지분법손익 등을 영업으로 끌어올리는 분류규칙 전환이 적용됩니다.</div>
+      </details>
+      <details data-reveal data-step="2">
+        <summary><span class="qx">+</span>전기 비교표도 만들어 주나요?</summary>
+        <div class="ans">네. 당기와 동일한 매핑을 전기에 일관 적용해 소급재작성한 비교표를 함께 산출합니다.</div>
+      </details>
+      <details data-reveal data-step="3">
+        <summary><span class="qx">+</span>결과가 감사조서로 바로 쓸 수 있나요?</summary>
+        <div class="ans">분류근거 로그에 계정별 판단 근거와 수동수정 이력이 기록되어 조서로 활용하기 좋습니다. 최종 판단은 감사인이 확정해야 합니다.</div>
+      </details>
+    </div>
   </section>
 
-  <div class="endcta">
-    <h2>IFRS 18 전환, 지금 점검하세요</h2>
-    <p>현행 손익계산서 한 장이면 새 양식과 조서가 바로 나옵니다.</p>
-    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 →</a>
-  </div>
+  <section class="cta-band" data-reveal>
+    <div class="in">
+      <h2>IFRS 18 전환, 지금 점검하세요</h2>
+      <p>현행 손익계산서 한 장이면 새 양식과 조서가 바로 나옵니다.</p>
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ifrs18" target="_blank" rel="noopener">도구 열기 →</a>
+    </div>
+  </section>
 
-  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
-  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="ifrs16.html">IFRS16 리스 계산기</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="rcps.html">RCPS · DCF 평가</a><a href="risk.html">Risk Tool</a><a href="tax.html">세무 AI</a></div>
-</main>
+  <section class="related">
+    <span class="eyebrow">다른 설명서</span>
+    <div class="rel-grid">
+      <a href="accounting.html">회계기준 AI</a>
+      <a href="audit.html">감사·윤리기준 AI</a>
+      <a href="bc.html">BC 금융기관조회서</a>
+      <a href="cc.html">CC 채권채무조회서</a>
+      <a href="ifrs16.html">IFRS16 리스 계산기</a>
+      <a href="irs.html">IRS 평가</a>
+      <a href="jet.html">JET</a>
+      <a href="rcps.html">RCPS · DCF 평가</a>
+      <a href="risk.html">Risk Tool</a>
+      <a href="tax.html">세무 AI</a>
+    </div>
+  </section>
+</div>
 
-<footer class="legal">
-  <div class="inner">
-    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
-    <span class="right">© 2026 Woongcpa</span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="disc"><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</div>
+    <div class="cr">© 2026 Woongcpa</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = "cubic-bezier(.22,.61,.36,1)";
+  var DIST = 14, DUR = 660, STAG = 70;
+  var reveals = [].slice.call(document.querySelectorAll("[data-reveal]"));
+  reveals.forEach(function(el){
+    if(reduce){ el.style.opacity=1; return; }
+    var step = parseInt(el.getAttribute("data-step")||"0",10);
+    el.style.transform = "translateY("+DIST+"px)";
+    el.style.transition = "opacity "+DUR+"ms "+EASE+", transform "+DUR+"ms "+EASE;
+    el.style.transitionDelay = (step*STAG)+"ms";
+  });
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  function near(el){ var r=el.getBoundingClientRect(); return r.top < vh()-40 && r.bottom>0; }
+  var counters = [].slice.call(document.querySelectorAll("[data-count]"));
+  function runCount(el){
+    var target = parseFloat(el.getAttribute("data-count"))||0;
+    if(reduce){ el.textContent = Math.round(target).toLocaleString("ko-KR"); return; }
+    var start=null, ease=function(t){return 1-Math.pow(1-t,3);};
+    function tick(now){
+      if(start===null) start=now;
+      var p=Math.min(1,(now-start)/1100);
+      el.textContent = Math.round(target*ease(p)).toLocaleString("ko-KR");
+      if(p<1) requestAnimationFrame(tick); else el.textContent = Math.round(target).toLocaleString("ko-KR");
+    }
+    requestAnimationFrame(tick);
+  }
+  function check(){
+    if(reduce) return;
+    reveals.forEach(function(el){
+      if(el.__shown) return;
+      if(near(el)){ el.__shown=true; el.style.opacity="1"; el.style.transform="none"; }
+    });
+    counters.forEach(function(el){
+      if(el.__counted) return;
+      var r=el.getBoundingClientRect();
+      if(r.top < vh() && r.bottom>0){ el.__counted=true; runCount(el); }
+    });
+  }
+  if(reduce){ counters.forEach(runCount); }
+  check();
+  window.addEventListener("scroll", check, {passive:true});
+  window.addEventListener("resize", check);
+  window.addEventListener("load", check);
+  setTimeout(check,60); setTimeout(check,300);
+  var hdr = document.getElementById("hdr");
+  function onScroll(){ hdr.classList.toggle("scrolled", window.scrollY>8); }
+  onScroll();
+  window.addEventListener("scroll", onScroll, {passive:true});
+})();
+</script>
 </body>
 </html>

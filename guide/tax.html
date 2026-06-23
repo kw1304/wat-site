@@ -1,119 +1,410 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>세무 AI 설명서 · WAT</title>
-<meta name="description" content="세무 AI 도구 사용설명서.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300C2B3'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3ER%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../styles.css">
+<meta name="description" content="법인세·소득세·부가세 등 한국 세법 질문에 조문·예규·심판례 근거로 답하는 세무 질의응답 도구 사용설명서." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --ink:#11151B; --muted:#5B6470; --faint:#8A93A0;
+  --line:#E7EAEF; --accent:#2B5FD9;
+  --accent-soft:color-mix(in oklab,var(--accent) 8%,#fff);
+  --accent-line:color-mix(in oklab,var(--accent) 22%,#fff);
+  --dark:#0F1320;
+  --radius:16px; --maxw:920px; --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500;}
+
+html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
+@media (prefers-reduced-motion:reduce){html.js [data-reveal]{opacity:1!important;transform:none!important;}}
+
+.hdr{position:sticky;top:0;z-index:50;background:color-mix(in oklab,var(--bg) 80%,transparent);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;}
+.hdr.scrolled{border-bottom-color:var(--line);background:color-mix(in oklab,var(--bg) 92%,transparent);}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:64px;max-width:1100px;}
+.brand{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;}
+.brand b{font-size:20px;}
+.brand span{font-size:11px;color:var(--faint);letter-spacing:.04em;}
+.nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.nav a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);font-weight:500;transition:color .2s,background .2s;}
+.nav a:hover{color:var(--ink);background:color-mix(in oklab,var(--ink) 5%,transparent);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;transition:transform .15s var(--ease),background .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(16,21,40,.12);}
+.btn:hover{background:color-mix(in oklab,var(--accent) 88%,#000);transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in oklab,var(--accent) 32%,transparent);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none;}
+.btn.ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);transform:translateY(-1px);}
+.btn.sm{padding:8px 14px;font-size:13px;}
+.btn.dark{background:var(--ink);color:#fff;box-shadow:none;}
+.btn.dark .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transition:transform .2s;}
+.btn.dark:hover{background:color-mix(in oklab,var(--ink) 90%,var(--accent));transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,21,40,.16);}
+.btn.dark:hover .dot{transform:scale(1.3);}
+
+.crumb{padding:30px 0 0;font-size:13px;color:var(--faint);}
+.crumb a{color:var(--muted);}
+.crumb a:hover{color:var(--accent);}
+.crumb .sep{margin:0 8px;color:var(--line);}
+.ghero{position:relative;overflow:hidden;padding:26px 0 46px;border-bottom:1px solid var(--line);}
+.ghero-glow{position:absolute;inset:-30% -10% auto -10%;height:420px;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 58% at 78% 8%, color-mix(in oklab,var(--accent) 11%,transparent), transparent 68%),
+    radial-gradient(46% 46% at 6% 0%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 70%);
+  animation:ghero-drift 18s ease-in-out infinite alternate;}
+@keyframes ghero-drift{from{transform:translate3d(0,0,0);}to{transform:translate3d(0,-16px,0);}}
+.ghero > *{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12px;color:var(--muted);font-weight:500;}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;
+  box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 60%,transparent);animation:ghero-pulse 2.4s infinite;}
+@keyframes ghero-pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 50%,transparent);}70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+.ghero .kicker{font-size:64px;font-weight:800;line-height:.9;letter-spacing:-.04em;color:var(--accent);opacity:.14;margin-bottom:6px;}
+.ghero h1{margin:0 0 6px;font-size:clamp(30px,4.4vw,46px);line-height:1.14;letter-spacing:-.03em;font-weight:800;text-wrap:balance;}
+.ghero h1 .hl{color:var(--accent);}
+.ghero .subt{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.ghero .subt .std{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:6px;padding:3px 9px;margin-left:6px;}
+.ghero .lede{font-size:17px;color:var(--ink);max-width:60ch;line-height:1.7;margin:0 0 26px;}
+.ghero .lede b{color:var(--accent);}
+.tnum{font-variant-numeric:tabular-nums;}
+.gstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:36px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.gstat{background:var(--surface);padding:22px 22px;}
+.gstat .num{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+.gstat .num.mono{font-family:"JetBrains Mono",monospace;color:var(--accent);}
+.gstat .lbl{margin-top:9px;font-size:12.5px;color:var(--muted);line-height:1.45;}
+.ghero-cta{display:flex;flex-wrap:wrap;gap:12px;}
+
+.gsec{padding:54px 0;border-bottom:1px solid var(--line);}
+.gsec:last-of-type{border-bottom:none;}
+.gsec-head{margin-bottom:30px;}
+.gsec-head .eyebrow{display:block;margin-bottom:12px;}
+.gsec-head h2{margin:0;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.025em;font-weight:800;line-height:1.2;}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;font-size:14.5px;color:var(--ink);line-height:1.55;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.check:hover{transform:translateY(-2px);border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.check .ck{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px;}
+
+.concepts{display:grid;gap:16px;}
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;
+  transition:border-color .25s,box-shadow .25s;}
+.concept:hover{border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.concept h3{margin:0 0 10px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.concept h3::before{content:"Q ";color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:600;}
+.concept p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.concept p b{color:var(--ink);}
+.formula{margin-top:18px;background:var(--dark);color:#fff;border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:15px;letter-spacing:.01em;text-align:center;}
+.formula .op{color:color-mix(in oklab,var(--accent) 55%,#fff);}
+
+.prep{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--radius);padding:24px 28px;}
+.prep .ph{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:14px;}
+.prep ul{margin:0;padding-left:0;list-style:none;display:grid;gap:10px;}
+.prep li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink);line-height:1.6;}
+.prep li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+.steps{display:grid;gap:0;}
+.step{position:relative;display:grid;grid-template-columns:auto 1fr;gap:22px;padding:22px 0;}
+.step:not(:last-child){border-bottom:1px dashed var(--line);}
+.step .sn{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;color:var(--accent);
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--accent-line);background:var(--surface);
+  display:grid;place-items:center;flex:none;}
+.step h3{margin:0 0 8px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.step p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.step .tip{margin-top:10px;font-size:13px;color:var(--accent);background:var(--accent-soft);
+  border-left:2px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;}
+.step p b,.step h3 .tab{color:var(--ink);}
+.tab{font-family:"Pretendard Variable",Pretendard,sans-serif;font-weight:600;font-size:.92em;letter-spacing:.01em;
+  background:color-mix(in oklab,var(--ink) 5%,transparent);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;}
+
+.outs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.out:hover{transform:translateY(-3px);border-color:var(--accent-line);box-shadow:0 12px 30px rgba(16,21,40,.07);}
+.out h3{margin:0 0 6px;font-size:15.5px;font-weight:700;}
+.out p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
+
+.faq{display:grid;gap:10px;}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .25s;}
+.faq details[open]{border-color:var(--accent-line);}
+.faq summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:12px;color:var(--ink);}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary .qx{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:14px;font-weight:800;transition:transform .3s var(--ease),background .25s,color .25s;}
+.faq details[open] summary .qx{transform:rotate(45deg);background:var(--accent);color:#fff;}
+.faq .ans{padding:0 22px 20px 56px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+.cta-band{background:var(--dark);color:#fff;position:relative;overflow:hidden;border-radius:var(--radius);margin:54px 0;}
+.cta-band::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 80% at 85% 0%,color-mix(in oklab,var(--accent) 30%,transparent),transparent 65%);pointer-events:none;}
+.cta-band .in{position:relative;z-index:1;padding:42px 44px;}
+.cta-band h2{margin:0 0 8px;font-size:clamp(21px,2.6vw,28px);font-weight:800;letter-spacing:-.02em;}
+.cta-band p{margin:0 0 22px;color:#9aa3b4;font-size:15px;}
+
+.related{padding:46px 0 10px;}
+.related .eyebrow{margin-bottom:18px;display:block;}
+.rel-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.rel-grid a{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:9px 16px;transition:color .2s,border-color .2s,transform .15s;}
+.rel-grid a:hover{color:var(--accent);border-color:var(--accent-line);transform:translateY(-1px);}
+
+.foot{border-top:1px solid var(--line);padding:40px 0;margin-top:30px;}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;}
+.foot .disc{font-size:12.5px;color:var(--faint);line-height:1.6;white-space:nowrap;}
+.foot .disc b{color:var(--muted);}
+.foot .cr{font-size:12.5px;color:var(--faint);}
+
+@media (max-width:720px){
+  .checks,.outs{grid-template-columns:1fr;}
+  .nav a:not(.btn){display:none;}
+  .foot .disc{white-space:normal;}
+}
+</style>
 </head>
 <body>
+<script>document.documentElement.className+=" js";</script>
 
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
-    <div class="nav-links">
-      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
-      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기</a>
-    </div>
-  </div>
-</nav>
-
-<header class="wrap g-hero">
-  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#reference">리서치</a> · 세무 AI</div>
-  <div class="g-top">
-    <div><h1>세무 AI<span class="en">Korean Tax Q&A</span></h1></div>
-  </div>
-  <p class="g-lead">세법 질문을 채팅으로 묻고 근거 있는 답을 받는 도구입니다. 법인세·소득세·부가가치세·국세기본법 등 한국 세법 전반을 다루며, 답변은 늘 [결론] → [근거 법령·조문] → [적용 논리] → [유의사항] 순서로 정리됩니다. '정밀검색' 모드를 켜면 국세법령정보시스템·법제처·조세심판원에서 실제 출처를 찾아 링크까지 붙여 줍니다. 세율·한도처럼 매년 바뀌는 수치는 단정 대신 귀속연도 확인과 정밀검색을 권고해, 오래된 기억으로 인한 오답을 줄였습니다.</p>
-  <div class="g-cta">
-    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기 →</a>
-    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>WAT</b><span>Woongcpa's Audit Tools</span></a>
+    <nav class="nav">
+      <a href="../index.html#valuation">평가</a>
+      <a href="../index.html#audit">감사보조</a>
+      <a href="../index.html#reference">리서치</a>
+      <a class="btn sm dark" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener"><span class="dot"></span>도구 바로가기</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap g-body">
+<div class="wrap">
+  <nav class="crumb">
+    <a href="../index.html">WAT</a><span class="sep">/</span>
+    <a href="../index.html#reference">리서치</a><span class="sep">/</span>
+    세무 AI
+  </nav>
 
-  <section class="g-block">
-    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
-    <div class="who">
-      <div class="item"><span class="chk">✓</span> 거래의 세무처리·세목 판단을 빠르게 확인하고 싶은 회계·세무 실무자</div>
-      <div class="item"><span class="chk">✓</span> 회계처리의 세무 영향(세무조정·소득처분)을 함께 보려는 감사·결산 담당자</div>
-      <div class="item"><span class="chk">✓</span> 조세불복 절차·부과제척기간 등 세무 절차를 정확히 확인해야 하는 사람</div>
-      <div class="item"><span class="chk">✓</span> 법령 원문·예규·심판례 출처까지 받아 근거로 남기고 싶은 실무자</div>
+  <section class="ghero">
+    <span class="ghero-glow" aria-hidden="true"></span>
+    <div class="hero-badge" data-reveal data-step="0"><i></i> 리서치 · Reference</div>
+    <div class="kicker" data-reveal data-step="1">R</div>
+    <h1 data-reveal data-step="2">세무 AI</h1>
+    <div class="subt" data-reveal data-step="3">Korean Tax Q&amp;A</div>
+    <p class="lede" data-reveal data-step="4">법인세·소득세·부가가치세 등 <b>한국 세법 질문</b>에 조문·예규·심판례 근거로 답하는 세무 질의응답 도구입니다. 세목별 관점을 고정하거나 정밀검색 모드를 켜면 국세법령정보·법제처·조세심판원의 실제 출처 링크까지 붙여 줍니다.</p>
+    <div class="ghero-cta" data-reveal data-step="5">
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 바로가기 →</a>
+      <a class="btn ghost" href="../index.html">다른 도구 보기</a>
+    </div>
+
+    <div class="gstats" data-reveal data-step="6">
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">지원 세목(법인·소득·양도·부가)</div></div>
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">따라 하기 단계</div></div>
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">핵심 산출 유형</div></div>
+      <div class="gstat"><div class="num mono">세법</div><div class="lbl">적용 기준 체계</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
-    <div class="concept">
-      <h4>왜 빠른답변과 정밀검색을 나눴나요?</h4>
-      <p>세법은 세율·한도·기준금액이 매년 개정됩니다. 빠른답변은 보유 지식으로 즉답하되 불확실한 수치·조문은 '정밀검색 확인 권고'로 표시하고, 정밀검색은 답하기 전에 국세법령정보·법제처·조세심판원을 실제로 검색해 출처 URL을 답변에 붙입니다. 속도와 근거 중 필요에 맞게 고르세요.</p>
-      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
-    </div>
-    <div class="concept">
-      <h4>세목 토글이 하는 일</h4>
-      <p>한 거래가 여러 세목에 걸릴 때(예: 부동산 양도 → 양도소득세 + 부가세 + 지방소득세) 답이 흐려질 수 있습니다. '법인세·소득·양도·부가세' 중 하나를 고르면 그 세목 관점으로만 답하고, '자동'이면 먼저 어느 세목 문제인지 밝힌 뒤 세목별로 나눠 줍니다.</p>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">이런 분께 · Who it's for</div><h2>이런 분께 필요합니다</h2></div>
+    <div class="checks">
+      <div class="check" data-reveal data-step="0"><span class="ck">✓</span><div>거래의 세무처리·세목 판단을 빠르게 확인하고 싶은 회계·세무 실무자</div></div>
+      <div class="check" data-reveal data-step="1"><span class="ck">✓</span><div>회계처리의 세무 영향(세무조정·소득처분)을 함께 보려는 감사·결산 담당자</div></div>
+      <div class="check" data-reveal data-step="2"><span class="ck">✓</span><div>조세불복 절차·부과제척기간 등 세무 절차를 정확히 확인해야 하는 사람</div></div>
+      <div class="check" data-reveal data-step="3"><span class="ck">✓</span><div>법령 원문·예규·심판례 출처까지 받아 근거로 남기고 싶은 실무자</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">3</span> 준비물</h2>
-    <div class="prep">
-      <h4>📋 시작 전에 챙겨주세요</h4>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">핵심 개념 · Key concepts</div><h2>미리 알아두면 좋은 개념</h2></div>
+    <div class="concepts">
+      <div class="concept" data-reveal data-step="0">
+        <h3>왜 빠른답변과 정밀검색을 나눴나요?</h3>
+        <p>세법은 세율·한도·기준금액이 <b>매년 개정</b>됩니다. 빠른답변은 보유 지식으로 즉답하되 불확실한 수치·조문은 '정밀검색 확인 권고'로 표시하고, 정밀검색은 답하기 전에 국세법령정보·법제처·조세심판원을 실제로 검색해 출처 URL을 답변에 붙입니다. 속도와 근거 중 필요에 맞게 고르세요.</p>
+      </div>
+      <div class="concept" data-reveal data-step="1">
+        <h3>세목 토글이 하는 일</h3>
+        <p>한 거래가 여러 세목에 걸릴 때(예: 부동산 양도 → 양도소득세 + 부가세 + 지방소득세) 답이 흐려질 수 있습니다. <b>법인세·소득·양도·부가세</b> 중 하나를 고르면 그 세목 관점으로만 답하고, '자동'이면 먼저 어느 세목 문제인지 밝힌 뒤 세목별로 나눠 줍니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">이렇게 물어보세요 · How to ask</div><h2>이렇게 물어보세요</h2></div>
+    <div class="prep" data-reveal>
+      <div class="ph">💬 질문 예시</div>
       <ul>
-        <li>묻고 싶은 세무 질문 (거래 사실관계를 구체적으로)</li>
-        <li>적용 귀속연도 (세율·한도가 걸린 질문이면 필수)</li>
-        <li>(선택) 세목 토글 — 특정 세목 관점만 원할 때</li>
+        <li>묻고 싶은 세무 질문과 거래 사실관계를 구체적으로 적으세요.</li>
+        <li>적용 귀속연도를 함께 적으면 세율·한도 관련 답이 훨씬 정확해집니다.</li>
+        <li>"법인이 대표이사에게 업무와 무관한 대여금을 지급한 경우 세무조정 방법은? (2025 사업연도)"</li>
+        <li>특정 세목만 원하면 상단 세목 토글을 먼저 선택하세요.</li>
       </ul>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">사용법 · Step by step</div><h2>이렇게 따라 하세요</h2></div>
     <div class="steps">
-      <div class="step"><h4>세목·응답 모드 선택</h4><p>상단에서 세목(자동/법인세/소득·양도/부가세)과 빠른답변·정밀검색을 고릅니다.</p></div>
-      <div class="step"><h4>질문 입력</h4><p>거래 사실관계와 귀속연도를 함께 적을수록 답이 정확해집니다.</p>
-        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
-      <div class="step"><h4>근거 확인</h4><p>[결론]과 인용된 조문·예규·심판례를 확인합니다. 정밀검색이면 출처 링크가 함께 붙습니다.</p></div>
-      <div class="step"><h4>이어 묻기</h4><p>같은 대화에서 후속 질문을 이어가면 맥락을 유지합니다. 새 주제는 '+ 새 대화'.</p></div>
+      <div class="step" data-reveal data-step="0">
+        <div class="sn">01</div>
+        <div>
+          <h3>세목·응답 모드 선택</h3>
+          <p>상단에서 세목(<span class="tab">자동</span> / <span class="tab">법인세</span> / <span class="tab">소득·양도</span> / <span class="tab">부가세</span>)과 응답 모드(<span class="tab">빠른답변</span> / <span class="tab">정밀검색</span>)를 고릅니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="1">
+        <div class="sn">02</div>
+        <div>
+          <h3>질문 입력</h3>
+          <p>거래 사실관계와 귀속연도를 함께 적을수록 답이 정확해집니다.</p>
+          <div class="tip">팁: 세율·한도가 걸린 질문이면 귀속연도 명시가 필수입니다.</div>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="2">
+        <div class="sn">03</div>
+        <div>
+          <h3>근거 확인</h3>
+          <p>[결론]과 인용된 조문·예규·심판례를 확인합니다. 정밀검색 모드라면 출처 링크가 함께 붙습니다. 링크를 조서에 그대로 인용할 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="3">
+        <div class="sn">04</div>
+        <div>
+          <h3>이어 묻기</h3>
+          <p>같은 대화에서 후속 질문을 이어가면 맥락이 유지됩니다. 새 주제는 <span class="tab">+ 새 대화</span>로 시작하세요.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">5</span> 무엇이 나오나요</h2>
-    <div class="out">
-      <div class="item"><h4>구조화된 답변</h4><p>[결론] → [근거 법령·조문] → [적용 논리] → [유의사항] 순서로 정리</p></div>
-      <div class="item"><h4>근거 인용</h4><p>법인세법 제N조·시행령, 예규(재△△△·서면질의), 조심·대법원 판례번호</p></div>
-      <div class="item"><h4>출처 링크(정밀검색)</h4><p>국세법령정보·법제처·조세심판원의 실제 접속 가능한 https URL</p></div>
-      <div class="item"><h4>유의사항·면책</h4><p>개정 가능 수치는 귀속연도·정밀검색 확인 권고와 함께 표시</p></div>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">결과물 · Output</div><h2>무엇이 나오나요</h2></div>
+    <div class="outs">
+      <div class="out" data-reveal data-step="0"><h3>구조화된 답변</h3><p>[결론] → [근거 법령·조문] → [적용 논리] → [유의사항] 순서로 정리</p></div>
+      <div class="out" data-reveal data-step="1"><h3>근거 인용</h3><p>법인세법 제N조·시행령, 예규(재△△△·서면질의), 조심·대법원 판례번호</p></div>
+      <div class="out" data-reveal data-step="2"><h3>출처 링크(정밀검색)</h3><p>국세법령정보·법제처·조세심판원의 실제 접속 가능한 https URL</p></div>
+      <div class="out" data-reveal data-step="3"><h3>유의사항·면책</h3><p>개정 가능 수치는 귀속연도·정밀검색 확인 권고와 함께 표시</p></div>
     </div>
   </section>
 
-  <section class="g-block faq">
-    <h2><span class="num">6</span> 자주 묻는 질문</h2>
-    <details><summary>세율·한도를 그대로 믿어도 되나요?</summary><div class="ans">세율·공제한도·기준금액은 매년 개정됩니다. 빠른답변은 단정을 피하고 '정밀검색 확인 권고'를 붙이며, 정확한 수치가 중요하면 정밀검색 모드로 귀속연도를 명시해 다시 물어보세요.</div></details>
-    <details><summary>회계·감사 질문도 되나요?</summary><div class="ans">이 도구는 세무 전용입니다. 회계기준은 '회계기준 AI', 감사·윤리는 '감사·윤리기준 AI'를 쓰세요. 다만 회계처리의 세무 영향처럼 세무와 직접 연관된 인접 주제는 세무 관점에서 답합니다.</div></details>
-    <details><summary>출처 링크는 어떻게 받나요?</summary><div class="ans">상단 '정밀검색' 모드를 켜면 답하기 전에 국세법령정보·법제처·조세심판원을 실제로 검색해, 확인된 법령·예규·심판례의 출처 URL을 답변에 포함합니다.</div></details>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">FAQ · 자주 묻는 질문</div><h2>자주 묻는 질문</h2></div>
+    <div class="faq">
+      <details data-reveal data-step="0">
+        <summary><span class="qx">+</span>세율·한도를 그대로 믿어도 되나요?</summary>
+        <div class="ans">세율·공제한도·기준금액은 매년 개정됩니다. 빠른답변은 단정을 피하고 '정밀검색 확인 권고'를 붙이며, 정확한 수치가 중요하면 정밀검색 모드로 귀속연도를 명시해 다시 물어보세요.</div>
+      </details>
+      <details data-reveal data-step="1">
+        <summary><span class="qx">+</span>회계·감사 질문도 되나요?</summary>
+        <div class="ans">이 도구는 세무 전용입니다. 회계기준은 '회계기준 AI', 감사·윤리는 '감사·윤리기준 AI'를 쓰세요. 다만 회계처리의 세무 영향처럼 세무와 직접 연관된 인접 주제는 세무 관점에서 답합니다.</div>
+      </details>
+      <details data-reveal data-step="2">
+        <summary><span class="qx">+</span>출처 링크는 어떻게 받나요?</summary>
+        <div class="ans">상단 '정밀검색' 모드를 켜면 답하기 전에 국세법령정보·법제처·조세심판원을 실제로 검색해, 확인된 법령·예규·심판례의 출처 URL을 답변에 포함합니다.</div>
+      </details>
+      <details data-reveal data-step="3">
+        <summary><span class="qx">+</span>지방세·관세도 다루나요?</summary>
+        <div class="ans">주력은 국세(법인세·소득세·부가가치세·국세기본법 등)입니다. 지방세·관세는 인접 영역으로 일부 답할 수 있으나, 전문 영역은 별도 확인을 권장합니다.</div>
+      </details>
+    </div>
   </section>
 
-  <div class="endcta">
-    <h2>세법 질문, 근거까지 받으세요</h2>
-    <p>세목을 고르고 물으면 조문·예규·심판례 근거로 답합니다.</p>
-    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기 →</a>
-  </div>
+  <section class="cta-band" data-reveal>
+    <div class="in">
+      <h2>세법 질문, 근거까지 받으세요</h2>
+      <p>세목을 고르고 물으면 조문·예규·심판례 근거로 답합니다.</p>
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=tax-ai" target="_blank" rel="noopener">도구 열기 →</a>
+    </div>
+  </section>
 
-  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
-  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="ifrs16.html">IFRS16 리스 계산기</a><a href="ifrs18.html">IFRS18 컨버전 툴</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="rcps.html">RCPS · DCF 평가</a><a href="risk.html">Risk Tool</a></div>
-</main>
+  <section class="related">
+    <span class="eyebrow">다른 설명서</span>
+    <div class="rel-grid">
+      <a href="accounting.html">회계기준 AI</a>
+      <a href="audit.html">감사·윤리기준 AI</a>
+      <a href="bc.html">BC 금융기관조회서</a>
+      <a href="cc.html">CC 채권채무조회서</a>
+      <a href="ifrs16.html">IFRS16 리스 계산기</a>
+      <a href="ifrs18.html">IFRS18 컨버전 툴</a>
+      <a href="irs.html">IRS 평가</a>
+      <a href="jet.html">JET</a>
+      <a href="rcps.html">RCPS · DCF 평가</a>
+      <a href="risk.html">Risk Tool</a>
+    </div>
+  </section>
+</div>
 
-<footer class="legal">
-  <div class="inner">
-    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
-    <span class="right">© 2026 Woongcpa</span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="disc"><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</div>
+    <div class="cr">© 2026 Woongcpa</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = "cubic-bezier(.22,.61,.36,1)";
+  var DIST = 14, DUR = 660, STAG = 70;
+  var reveals = [].slice.call(document.querySelectorAll("[data-reveal]"));
+  reveals.forEach(function(el){
+    if(reduce){ el.style.opacity=1; return; }
+    var step = parseInt(el.getAttribute("data-step")||"0",10);
+    el.style.transform = "translateY("+DIST+"px)";
+    el.style.transition = "opacity "+DUR+"ms "+EASE+", transform "+DUR+"ms "+EASE;
+    el.style.transitionDelay = (step*STAG)+"ms";
+  });
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  function near(el){ var r=el.getBoundingClientRect(); return r.top < vh()-40 && r.bottom>0; }
+  var counters = [].slice.call(document.querySelectorAll("[data-count]"));
+  function runCount(el){
+    var target = parseFloat(el.getAttribute("data-count"))||0;
+    if(reduce){ el.textContent = Math.round(target).toLocaleString("ko-KR"); return; }
+    var start=null, ease=function(t){return 1-Math.pow(1-t,3);};
+    function tick(now){
+      if(start===null) start=now;
+      var p=Math.min(1,(now-start)/1100);
+      el.textContent = Math.round(target*ease(p)).toLocaleString("ko-KR");
+      if(p<1) requestAnimationFrame(tick); else el.textContent = Math.round(target).toLocaleString("ko-KR");
+    }
+    requestAnimationFrame(tick);
+  }
+  function check(){
+    if(reduce) return;
+    reveals.forEach(function(el){
+      if(el.__shown) return;
+      if(near(el)){ el.__shown=true; el.style.opacity="1"; el.style.transform="none"; }
+    });
+    counters.forEach(function(el){
+      if(el.__counted) return;
+      var r=el.getBoundingClientRect();
+      if(r.top < vh() && r.bottom>0){ el.__counted=true; runCount(el); }
+    });
+  }
+  if(reduce){ counters.forEach(runCount); }
+  check();
+  window.addEventListener("scroll", check, {passive:true});
+  window.addEventListener("resize", check);
+  window.addEventListener("load", check);
+  setTimeout(check,60); setTimeout(check,300);
+  var hdr = document.getElementById("hdr");
+  function onScroll(){ hdr.classList.toggle("scrolled", window.scrollY>8); }
+  onScroll();
+  window.addEventListener("scroll", onScroll, {passive:true});
+})();
+</script>
 </body>
 </html>

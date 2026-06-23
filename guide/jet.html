@@ -1,124 +1,420 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JET 분개 테스트 설명서 · WAT</title>
-<meta name="description" content="ISA 240 부정위험 대응 분개 테스트(JET) 자동화 도구 사용설명서.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EJ%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JET · Journal Entry Test 설명서 · WAT</title>
+<meta name="description" content="ISA 240 부정위험 대응 분개 테스트(JET) 자동화 도구 사용설명서. 15종 룰 전수 분석부터 결과 조서 출력까지 단계별 안내." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --ink:#11151B; --muted:#5B6470; --faint:#8A93A0;
+  --line:#E7EAEF; --accent:#2B5FD9;
+  --accent-soft:color-mix(in oklab,var(--accent) 8%,#fff);
+  --accent-line:color-mix(in oklab,var(--accent) 22%,#fff);
+  --dark:#0F1320;
+  --radius:16px; --maxw:920px; --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500;}
+
+html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
+@media (prefers-reduced-motion:reduce){html.js [data-reveal]{opacity:1!important;transform:none!important;}}
+
+.hdr{position:sticky;top:0;z-index:50;background:color-mix(in oklab,var(--bg) 80%,transparent);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;}
+.hdr.scrolled{border-bottom-color:var(--line);background:color-mix(in oklab,var(--bg) 92%,transparent);}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:64px;max-width:1100px;}
+.brand{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;}
+.brand b{font-size:20px;}
+.brand span{font-size:11px;color:var(--faint);letter-spacing:.04em;}
+.nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.nav a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);font-weight:500;transition:color .2s,background .2s;}
+.nav a:hover{color:var(--ink);background:color-mix(in oklab,var(--ink) 5%,transparent);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;transition:transform .15s var(--ease),background .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(16,21,40,.12);}
+.btn:hover{background:color-mix(in oklab,var(--accent) 88%,#000);transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in oklab,var(--accent) 32%,transparent);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none;}
+.btn.ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);transform:translateY(-1px);}
+.btn.sm{padding:8px 14px;font-size:13px;}
+.btn.dark{background:var(--ink);color:#fff;box-shadow:none;}
+.btn.dark .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transition:transform .2s;}
+.btn.dark:hover{background:color-mix(in oklab,var(--ink) 90%,var(--accent));transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,21,40,.16);}
+.btn.dark:hover .dot{transform:scale(1.3);}
+
+.crumb{padding:30px 0 0;font-size:13px;color:var(--faint);}
+.crumb a{color:var(--muted);}
+.crumb a:hover{color:var(--accent);}
+.crumb .sep{margin:0 8px;color:var(--line);}
+.ghero{position:relative;overflow:hidden;padding:26px 0 46px;border-bottom:1px solid var(--line);}
+.ghero-glow{position:absolute;inset:-30% -10% auto -10%;height:420px;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 58% at 78% 8%, color-mix(in oklab,var(--accent) 11%,transparent), transparent 68%),
+    radial-gradient(46% 46% at 6% 0%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 70%);
+  animation:ghero-drift 18s ease-in-out infinite alternate;}
+@keyframes ghero-drift{from{transform:translate3d(0,0,0);}to{transform:translate3d(0,-16px,0);}}
+.ghero > *{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12px;color:var(--muted);font-weight:500;}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;
+  box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 60%,transparent);animation:ghero-pulse 2.4s infinite;}
+@keyframes ghero-pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 50%,transparent);}70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+.ghero .kicker{font-size:64px;font-weight:800;line-height:.9;letter-spacing:-.04em;color:var(--accent);opacity:.14;margin-bottom:6px;}
+.ghero h1{margin:0 0 6px;font-size:clamp(30px,4.4vw,46px);line-height:1.14;letter-spacing:-.03em;font-weight:800;text-wrap:balance;}
+.ghero h1 .hl{color:var(--accent);}
+.ghero .subt{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.ghero .subt .std{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:6px;padding:3px 9px;margin-left:6px;}
+.ghero .lede{font-size:17px;color:var(--ink);max-width:60ch;line-height:1.7;margin:0 0 26px;}
+.ghero .lede b{color:var(--accent);}
+.tnum{font-variant-numeric:tabular-nums;}
+.gstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:36px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.gstat{background:var(--surface);padding:22px 22px;}
+.gstat .num{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+.gstat .num.mono{font-family:"JetBrains Mono",monospace;color:var(--accent);}
+.gstat .lbl{margin-top:9px;font-size:12.5px;color:var(--muted);line-height:1.45;}
+.ghero-cta{display:flex;flex-wrap:wrap;gap:12px;}
+
+.gsec{padding:54px 0;border-bottom:1px solid var(--line);}
+.gsec:last-of-type{border-bottom:none;}
+.gsec-head{margin-bottom:30px;}
+.gsec-head .eyebrow{display:block;margin-bottom:12px;}
+.gsec-head h2{margin:0;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.025em;font-weight:800;line-height:1.2;}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;font-size:14.5px;color:var(--ink);line-height:1.55;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.check:hover{transform:translateY(-2px);border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.check .ck{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px;}
+
+.concepts{display:grid;gap:16px;}
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;
+  transition:border-color .25s,box-shadow .25s;}
+.concept:hover{border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.concept h3{margin:0 0 10px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.concept h3::before{content:"Q ";color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:600;}
+.concept p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.concept p b{color:var(--ink);}
+.formula{margin-top:18px;background:var(--dark);color:#fff;border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:15px;letter-spacing:.01em;text-align:center;}
+.formula .op{color:color-mix(in oklab,var(--accent) 55%,#fff);}
+
+.prep{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--radius);padding:24px 28px;}
+.prep .ph{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:14px;}
+.prep ul{margin:0;padding-left:0;list-style:none;display:grid;gap:10px;}
+.prep li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink);line-height:1.6;}
+.prep li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+.steps{display:grid;gap:0;}
+.step{position:relative;display:grid;grid-template-columns:auto 1fr;gap:22px;padding:22px 0;}
+.step:not(:last-child){border-bottom:1px dashed var(--line);}
+.step .sn{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;color:var(--accent);
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--accent-line);background:var(--surface);
+  display:grid;place-items:center;flex:none;}
+.step h3{margin:0 0 8px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.step p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.step .tip{margin-top:10px;font-size:13px;color:var(--accent);background:var(--accent-soft);
+  border-left:2px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;}
+.step p b,.step h3 .tab{color:var(--ink);}
+.tab{font-family:"Pretendard Variable",Pretendard,sans-serif;font-weight:600;font-size:.92em;letter-spacing:.01em;
+  background:color-mix(in oklab,var(--ink) 5%,transparent);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;}
+
+.outs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.out:hover{transform:translateY(-3px);border-color:var(--accent-line);box-shadow:0 12px 30px rgba(16,21,40,.07);}
+.out h3{margin:0 0 6px;font-size:15.5px;font-weight:700;}
+.out p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
+
+.faq{display:grid;gap:10px;}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .25s;}
+.faq details[open]{border-color:var(--accent-line);}
+.faq summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:12px;color:var(--ink);}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary .qx{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:14px;font-weight:800;transition:transform .3s var(--ease),background .25s,color .25s;}
+.faq details[open] summary .qx{transform:rotate(45deg);background:var(--accent);color:#fff;}
+.faq .ans{padding:0 22px 20px 56px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+.cta-band{background:var(--dark);color:#fff;position:relative;overflow:hidden;border-radius:var(--radius);margin:54px 0;}
+.cta-band::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 80% at 85% 0%,color-mix(in oklab,var(--accent) 30%,transparent),transparent 65%);pointer-events:none;}
+.cta-band .in{position:relative;z-index:1;padding:42px 44px;}
+.cta-band h2{margin:0 0 8px;font-size:clamp(21px,2.6vw,28px);font-weight:800;letter-spacing:-.02em;}
+.cta-band p{margin:0 0 22px;color:#9aa3b4;font-size:15px;}
+
+.related{padding:46px 0 10px;}
+.related .eyebrow{margin-bottom:18px;display:block;}
+.rel-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.rel-grid a{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:9px 16px;transition:color .2s,border-color .2s,transform .15s;}
+.rel-grid a:hover{color:var(--accent);border-color:var(--accent-line);transform:translateY(-1px);}
+
+.foot{border-top:1px solid var(--line);padding:40px 0;margin-top:30px;}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;}
+.foot .disc{font-size:12.5px;color:var(--faint);line-height:1.6;white-space:nowrap;}
+.foot .disc b{color:var(--muted);}
+.foot .cr{font-size:12.5px;color:var(--faint);}
+
+@media (max-width:720px){
+  .checks,.outs{grid-template-columns:1fr;}
+  .nav a:not(.btn){display:none;}
+  .foot .disc{white-space:normal;}
+}
+</style>
 </head>
 <body>
+<script>document.documentElement.className+=" js";</script>
 
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
-    <div class="nav-links">
-      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
-      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기</a>
-    </div>
-  </div>
-</nav>
-
-<header class="wrap g-hero">
-  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · JET 분개 테스트</div>
-  <div class="g-top">
-    <div><h1>JET 분개 테스트<span class="en">Journal Entry Test · ISA 240</span></h1></div>
-  </div>
-  <p class="g-lead">분개(전표)는 수만 건이라 사람이 다 볼 수 없습니다. 이 도구는 <b>부정위험 징후가 있는 전표</b>를
-    자동으로 골라냅니다. 결산일 직전 분개, 주말·공휴일 입력, 어색한 라운드 금액 등 12가지 신호를 한 번에 점검합니다.</p>
-  <div class="g-cta">
-    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기 →</a>
-    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>WAT</b><span>Woongcpa's Audit Tools</span></a>
+    <nav class="nav">
+      <a href="../index.html#valuation">평가</a>
+      <a href="../index.html#audit">감사보조</a>
+      <a href="../index.html#reference">리서치</a>
+      <a class="btn sm dark" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener"><span class="dot"></span>도구 바로가기</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap g-body">
+<div class="wrap">
+  <nav class="crumb">
+    <a href="../index.html">WAT</a><span class="sep">/</span>
+    <a href="../index.html#audit">감사보조</a><span class="sep">/</span>
+    JET
+  </nav>
 
-  <section class="g-block">
-    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
-    <div class="who">
-      <div class="item"><span class="chk">✓</span> ISA 240에 따라 분개 테스트를 수행해야 하는 감사인</div>
-      <div class="item"><span class="chk">✓</span> 총계정원장 전수에서 이상 전표를 추출해야 하는 실무자</div>
-      <div class="item"><span class="chk">✓</span> 고객사마다 다른 GL 양식 때문에 매번 가공이 번거로웠던 분</div>
-      <div class="item"><span class="chk">✓</span> 추출 근거(어떤 룰에 걸렸는지)를 조서로 남겨야 하는 분</div>
+  <section class="ghero">
+    <span class="ghero-glow" aria-hidden="true"></span>
+    <div class="hero-badge" data-reveal data-step="0"><i></i> 감사보조 · Audit</div>
+    <div class="kicker" data-reveal data-step="1">A</div>
+    <h1 data-reveal data-step="2">JET</h1>
+    <div class="subt" data-reveal data-step="3">Journal Entry Test</div>
+    <p class="lede" data-reveal data-step="4">분개(전표)는 수만 건이라 사람이 다 볼 수 없습니다. 이 도구는 <b>부정위험 징후가 있는 전표</b>를
+       자동으로 골라냅니다. 결산일 인접·주말 입력·라운드 넘버 등 15종 룰을 한 번에 전수 적용하고, 각 전표가 어떤 룰에 왜 걸렸는지 함께 보여줍니다.</p>
+    <div class="ghero-cta" data-reveal data-step="5">
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 바로가기 →</a>
+      <a class="btn ghost" href="../index.html">다른 도구 보기</a>
+    </div>
+
+    <div class="gstats" data-reveal data-step="6">
+      <div class="gstat"><div class="num tnum" data-count="15">0</div><div class="lbl">부정징후 탐지 룰</div></div>
+      <div class="gstat"><div class="num tnum" data-count="5">0</div><div class="lbl">사용법 단계</div></div>
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">핵심 산출 지표</div></div>
+      
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
-    <div class="concept">
-      <h4>왜 "전수"를 보나요?</h4>
-      <p>부정은 드물지만 한 건이 크리티컬합니다. 그래서 표본만 보는 대신, 전체 분개를 룰로 훑어
-        의심 신호가 있는 전표만 좁혀 본 뒤 사람이 검토합니다. 효율과 빠짐없음을 동시에 잡는 방식입니다.</p>
-    </div>
-    <div class="concept">
-      <h4>12종 룰이란?</h4>
-      <p>결산일 인접 분개, 주말/공휴일 입력, 라운드 넘버(예: 정확히 1,000,000), 대형 금액,
-        적요 키워드(가공·임시 등), 비경상 계정 조합 등 부정·오류가 잘 숨는 패턴을 룰로 만들었습니다.</p>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">이런 분께 · Who it's for</div><h2>이런 분께 필요합니다</h2></div>
+    <div class="checks">
+      <div class="check" data-reveal data-step="0"><span class="ck">✓</span><div>ISA 240에 따라 분개 테스트를 수행해야 하는 감사인</div></div>
+      <div class="check" data-reveal data-step="1"><span class="ck">✓</span><div>총계정원장 전수에서 이상 전표를 추출해야 하는 실무자</div></div>
+      <div class="check" data-reveal data-step="2"><span class="ck">✓</span><div>고객사마다 다른 GL 양식 때문에 매번 가공이 번거로웠던 분</div></div>
+      <div class="check" data-reveal data-step="3"><span class="ck">✓</span><div>추출 근거(어떤 룰에 걸렸는지)를 조서로 남겨야 하는 분</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">3</span> 준비물</h2>
-    <div class="prep">
-      <h4>📋 시작 전에 챙겨주세요</h4>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">핵심 개념 · Key concepts</div><h2>미리 알아두면 좋은 개념</h2></div>
+    <div class="concepts">
+      <div class="concept" data-reveal data-step="0">
+        <h3>왜 "전수"를 보나요?</h3>
+        <p>부정은 드물지만 한 건이 크리티컬합니다. 그래서 표본만 보는 대신, <b>전체 분개를 룰로 훑어</b>
+           의심 신호가 있는 전표만 좁혀 본 뒤 사람이 검토합니다. 효율과 빠짐없음을 동시에 잡는 방식입니다.</p>
+      </div>
+      <div class="concept" data-reveal data-step="1">
+        <h3>15종 룰이란?</h3>
+        <p>결산일 인접 분개, 주말·공휴일 입력, <b>라운드 넘버</b>(예: 정확히 1,000,000), 대형 금액,
+           적요 키워드(가공·임시 등), 비경상 계정 조합 등 부정·오류가 잘 숨는 패턴을 룰로 만들었습니다.
+           어떤 룰에 걸렸는지 전표마다 사유가 함께 표시됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">준비물 · What you need</div><h2>준비물</h2></div>
+    <div class="prep" data-reveal>
+      <div class="ph">📋 시작 전에 챙겨주세요</div>
       <ul>
-        <li>총계정원장(GL) 엑셀 파일 — 전표일자·계정·차변·대변·적요·입력자 등</li>
-        <li>대상 회계기간</li>
+        <li>총계정원장(GL) 엑셀 파일 — 전표일자·계정·차변·대변·적요·입력자 등 포함</li>
+        <li>대상 회계기간(시작일·종료일)</li>
         <li>(선택) 회사별 컬럼명이 표준과 다르면 한 번만 매핑해 두면 됩니다</li>
       </ul>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">사용법 · Step by step</div><h2>이렇게 따라 하세요</h2></div>
     <div class="steps">
-      <div class="step"><h4>GL 파일 올리기</h4><p>총계정원장 엑셀을 업로드합니다. 한글 날짜(2024년12월31일)·금액 포맷(△, (1,000))도 자동 인식합니다.</p></div>
-      <div class="step"><h4>컬럼 확인</h4><p>도구가 컬럼을 자동으로 맞춥니다. 다르면 한 번만 지정하면 다음부터 기억합니다.</p>
-        <span class="tip">고객사가 바뀌어도 매핑만 바꾸면 같은 룰을 그대로 씁니다.</span></div>
-      <div class="step"><h4>룰셋 선택·실행</h4><p>표준 12룰을 그대로 돌리거나 필요한 룰만 골라 실행합니다.</p></div>
-      <div class="step"><h4>걸린 전표 검토</h4><p>각 전표가 어떤 룰에 왜 걸렸는지 함께 표시됩니다. 사람이 최종 판단합니다.</p></div>
-      <div class="step"><h4>결과 내보내기</h4><p>추출 결과와 룰 근거를 조서용으로 저장합니다.</p></div>
+      <div class="step" data-reveal data-step="0">
+        <div class="sn">01</div>
+        <div>
+          <h3>GL 파일 올리기</h3>
+          <p>총계정원장 엑셀을 업로드합니다. 한글 날짜(2024년12월31일)·금액 포맷(△, (1,000))도 자동 인식합니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="1">
+        <div class="sn">02</div>
+        <div>
+          <h3>컬럼 확인·매핑</h3>
+          <p>도구가 컬럼을 자동으로 맞춥니다. 다르면 한 번만 지정하면 다음부터 기억합니다.</p>
+          <div class="tip">팁: 고객사가 바뀌어도 매핑만 바꾸면 같은 15종 룰을 그대로 씁니다.</div>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="2">
+        <div class="sn">03</div>
+        <div>
+          <h3>룰셋 선택·실행</h3>
+          <p>표준 15종 룰을 그대로 돌리거나 필요한 룰만 골라 실행합니다. 전수 분개가 한 번에 처리됩니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="3">
+        <div class="sn">04</div>
+        <div>
+          <h3>걸린 전표 검토</h3>
+          <p>각 전표가 어떤 룰에 왜 걸렸는지 함께 표시됩니다. 사람이 최종 판단합니다.</p>
+        </div>
+      </div>
+      <div class="step" data-reveal data-step="4">
+        <div class="sn">05</div>
+        <div>
+          <h3>결과 내보내기</h3>
+          <p>추출 결과와 룰 근거를 조서용으로 저장합니다. 어떤 룰에 걸렸는지가 함께 기록됩니다.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">5</span> 무엇이 나오나요</h2>
-    <div class="out">
-      <div class="item"><h4>이상 전표 목록</h4><p>룰에 걸린 분개만 추려서</p></div>
-      <div class="item"><h4>적출 사유</h4><p>어떤 룰에 왜 걸렸는지</p></div>
-      <div class="item"><h4>룰별 건수</h4><p>위험 분포 한눈에</p></div>
-      <div class="item"><h4>조서용 출력</h4><p>근거가 남는 결과 파일</p></div>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">결과물 · Output</div><h2>무엇이 나오나요</h2></div>
+    <div class="outs">
+      <div class="out" data-reveal data-step="0"><h3>이상 전표 목록</h3><p>15종 룰에 걸린 분개만 추려서</p></div>
+      <div class="out" data-reveal data-step="1"><h3>적출 사유</h3><p>어떤 룰에 왜 걸렸는지 전표별 표시</p></div>
+      <div class="out" data-reveal data-step="2"><h3>룰별 건수</h3><p>위험 분포 한눈에 파악</p></div>
+      <div class="out" data-reveal data-step="3"><h3>조서용 출력</h3><p>근거가 남는 결과 파일</p></div>
     </div>
   </section>
 
-  <section class="g-block faq">
-    <h2><span class="num">6</span> 자주 묻는 질문</h2>
-    <details><summary>걸린 전표는 모두 부정인가요?</summary>
-      <div class="ans">아닙니다. "한 번 더 볼 필요가 있는" 후보일 뿐입니다. 정상 거래도 룰에 걸릴 수 있으므로 사람이 검토해 판단합니다.</div></details>
-    <details><summary>회사마다 엑셀 양식이 다른데요?</summary>
-      <div class="ans">컬럼 매핑으로 흡수합니다. 처음 한 번만 맞추면 같은 룰을 어느 회사에나 적용할 수 있습니다.</div></details>
-    <details><summary>공휴일은 어떻게 아나요?</summary>
-      <div class="ans">한국 공휴일 캘린더가 들어 있어, 주말·공휴일 입력 분개를 자동으로 표시합니다.</div></details>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">FAQ · 자주 묻는 질문</div><h2>자주 묻는 질문</h2></div>
+    <div class="faq">
+      <details data-reveal data-step="0">
+        <summary><span class="qx">+</span>걸린 전표는 모두 부정인가요?</summary>
+        <div class="ans">아닙니다. "한 번 더 볼 필요가 있는" 후보일 뿐입니다. 정상 거래도 룰에 걸릴 수 있으므로 사람이 검토해 판단합니다.</div>
+      </details>
+      <details data-reveal data-step="1">
+        <summary><span class="qx">+</span>회사마다 엑셀 양식이 다른데요?</summary>
+        <div class="ans">컬럼 매핑으로 흡수합니다. 처음 한 번만 맞추면 같은 룰을 어느 회사에나 적용할 수 있습니다.</div>
+      </details>
+      <details data-reveal data-step="2">
+        <summary><span class="qx">+</span>공휴일은 어떻게 아나요?</summary>
+        <div class="ans">한국 공휴일 캘린더가 내장되어 있어, 주말·공휴일 입력 분개를 자동으로 표시합니다.</div>
+      </details>
+      <details data-reveal data-step="3">
+        <summary><span class="qx">+</span>15종 룰이 모두 뭔가요?</summary>
+        <div class="ans">결산일 인접, 주말·공휴일 입력, 라운드 넘버, 대형 금액, 적요 키워드(가공·임시 등), 비경상 계정 조합 등 부정·오류가 숨기 쉬운 패턴을 포괄합니다. 룰별로 적용 여부를 선택할 수 있습니다.</div>
+      </details>
+    </div>
   </section>
 
-  <div class="endcta">
-    <h2>전표 더미에서 위험만 골라내세요</h2>
-    <p>GL 엑셀 한 장이면 12종 룰이 자동으로 돕니다.</p>
-    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기 →</a>
-  </div>
+  <section class="cta-band" data-reveal>
+    <div class="in">
+      <h2>전표 더미에서 위험만 골라내세요</h2>
+      <p>GL 엑셀 한 장이면 15종 룰이 자동으로 돕습니다.</p>
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=jet" target="_blank" rel="noopener">도구 열기 →</a>
+    </div>
+  </section>
 
-  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="ifrs16.html">IFRS16 리스 계산기</a><a href="ifrs18.html">IFRS18 컨버전 툴</a><a href="irs.html">IRS 평가</a><a href="rcps.html">RCPS · DCF 평가</a><a href="risk.html">Risk Tool</a><a href="tax.html">세무 AI</a></div>
-</main>
+  <section class="related">
+    <span class="eyebrow">다른 설명서</span>
+    <div class="rel-grid">
+      <a href="accounting.html">회계기준 AI</a>
+      <a href="audit.html">감사·윤리기준 AI</a>
+      <a href="bc.html">BC 금융기관조회서</a>
+      <a href="cc.html">CC 채권채무조회서</a>
+      <a href="ifrs16.html">IFRS16 리스 계산기</a>
+      <a href="ifrs18.html">IFRS18 컨버전 툴</a>
+      <a href="irs.html">IRS 평가</a>
+      <a href="rcps.html">RCPS · DCF 평가</a>
+      <a href="risk.html">Risk Tool</a>
+      <a href="tax.html">세무 AI</a>
+    </div>
+  </section>
+</div>
 
-<footer class="legal">
-  <div class="inner">
-    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
-    <span class="right">© 2026 Woongcpa</span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="disc"><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</div>
+    <div class="cr">© 2026 Woongcpa</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = "cubic-bezier(.22,.61,.36,1)";
+  var DIST = 14, DUR = 660, STAG = 70;
+  var reveals = [].slice.call(document.querySelectorAll("[data-reveal]"));
+  reveals.forEach(function(el){
+    if(reduce){ el.style.opacity=1; return; }
+    var step = parseInt(el.getAttribute("data-step")||"0",10);
+    el.style.transform = "translateY("+DIST+"px)";
+    el.style.transition = "opacity "+DUR+"ms "+EASE+", transform "+DUR+"ms "+EASE;
+    el.style.transitionDelay = (step*STAG)+"ms";
+  });
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  function near(el){ var r=el.getBoundingClientRect(); return r.top < vh()-40 && r.bottom>0; }
+  var counters = [].slice.call(document.querySelectorAll("[data-count]"));
+  function runCount(el){
+    var target = parseFloat(el.getAttribute("data-count"))||0;
+    if(reduce){ el.textContent = Math.round(target).toLocaleString("ko-KR"); return; }
+    var start=null, ease=function(t){return 1-Math.pow(1-t,3);};
+    function tick(now){
+      if(start===null) start=now;
+      var p=Math.min(1,(now-start)/1100);
+      el.textContent = Math.round(target*ease(p)).toLocaleString("ko-KR");
+      if(p<1) requestAnimationFrame(tick); else el.textContent = Math.round(target).toLocaleString("ko-KR");
+    }
+    requestAnimationFrame(tick);
+  }
+  function check(){
+    if(reduce) return;
+    reveals.forEach(function(el){
+      if(el.__shown) return;
+      if(near(el)){ el.__shown=true; el.style.opacity="1"; el.style.transform="none"; }
+    });
+    counters.forEach(function(el){
+      if(el.__counted) return;
+      var r=el.getBoundingClientRect();
+      if(r.top < vh() && r.bottom>0){ el.__counted=true; runCount(el); }
+    });
+  }
+  if(reduce){ counters.forEach(runCount); }
+  check();
+  window.addEventListener("scroll", check, {passive:true});
+  window.addEventListener("resize", check);
+  window.addEventListener("load", check);
+  setTimeout(check,60); setTimeout(check,300);
+  var hdr = document.getElementById("hdr");
+  function onScroll(){ hdr.classList.toggle("scrolled", window.scrollY>8); }
+  onScroll();
+  window.addEventListener("scroll", onScroll, {passive:true});
+})();
+</script>
 </body>
 </html>

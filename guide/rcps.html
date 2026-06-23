@@ -1,73 +1,253 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>RCPS · DCF 평가 설명서 · WAT</title>
-<meta name="description" content="상환전환우선주(RCPS)·사업가치 공정가치 평가 도구 사용설명서. 입력부터 결과 해석까지 단계별 안내.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233182F6'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EWAT%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../styles.css">
+<meta name="description" content="상환전환우선주(RCPS)·사업가치 공정가치 평가 도구 사용설명서. 입력부터 결과 해석까지 단계별 안내." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --ink:#11151B; --muted:#5B6470; --faint:#8A93A0;
+  --line:#E7EAEF; --accent:#2B5FD9;
+  --accent-soft:color-mix(in oklab,var(--accent) 8%,#fff);
+  --accent-line:color-mix(in oklab,var(--accent) 22%,#fff);
+  --dark:#0F1320;
+  --radius:16px; --maxw:920px; --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500;}
+
+html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
+@media (prefers-reduced-motion:reduce){html.js [data-reveal]{opacity:1!important;transform:none!important;}}
+
+.hdr{position:sticky;top:0;z-index:50;background:color-mix(in oklab,var(--bg) 80%,transparent);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;}
+.hdr.scrolled{border-bottom-color:var(--line);background:color-mix(in oklab,var(--bg) 92%,transparent);}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:64px;max-width:1100px;}
+.brand{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;}
+.brand b{font-size:20px;}
+.brand span{font-size:11px;color:var(--faint);letter-spacing:.04em;}
+.nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.nav a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);font-weight:500;transition:color .2s,background .2s;}
+.nav a:hover{color:var(--ink);background:color-mix(in oklab,var(--ink) 5%,transparent);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  background:var(--accent);color:#fff;border:1px solid transparent;transition:transform .15s var(--ease),background .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(16,21,40,.12);}
+.btn:hover{background:color-mix(in oklab,var(--accent) 88%,#000);transform:translateY(-1px);box-shadow:0 6px 18px color-mix(in oklab,var(--accent) 32%,transparent);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none;}
+.btn.ghost:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);transform:translateY(-1px);}
+.btn.sm{padding:8px 14px;font-size:13px;}
+.btn.dark{background:var(--ink);color:#fff;box-shadow:none;}
+.btn.dark .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transition:transform .2s;}
+.btn.dark:hover{background:color-mix(in oklab,var(--ink) 90%,var(--accent));transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,21,40,.16);}
+.btn.dark:hover .dot{transform:scale(1.3);}
+
+.crumb{padding:30px 0 0;font-size:13px;color:var(--faint);}
+.crumb a{color:var(--muted);}
+.crumb a:hover{color:var(--accent);}
+.crumb .sep{margin:0 8px;color:var(--line);}
+.ghero{position:relative;overflow:hidden;padding:26px 0 46px;border-bottom:1px solid var(--line);}
+.ghero-glow{position:absolute;inset:-30% -10% auto -10%;height:420px;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 58% at 78% 8%, color-mix(in oklab,var(--accent) 11%,transparent), transparent 68%),
+    radial-gradient(46% 46% at 6% 0%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 70%);
+  animation:ghero-drift 18s ease-in-out infinite alternate;}
+@keyframes ghero-drift{from{transform:translate3d(0,0,0);}to{transform:translate3d(0,-16px,0);}}
+.ghero > *{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12px;color:var(--muted);font-weight:500;}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;
+  box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 60%,transparent);animation:ghero-pulse 2.4s infinite;}
+@keyframes ghero-pulse{0%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 50%,transparent);}70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+.ghero .kicker{font-size:64px;font-weight:800;line-height:.9;letter-spacing:-.04em;color:var(--accent);opacity:.14;margin-bottom:6px;}
+.ghero h1{margin:0 0 6px;font-size:clamp(30px,4.4vw,46px);line-height:1.14;letter-spacing:-.03em;font-weight:800;text-wrap:balance;}
+.ghero h1 .hl{color:var(--accent);}
+.ghero .subt{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+.ghero .subt .std{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:6px;padding:3px 9px;margin-left:6px;}
+.ghero .lede{font-size:17px;color:var(--ink);max-width:60ch;line-height:1.7;margin:0 0 26px;}
+.ghero .lede b{color:var(--accent);}
+.tnum{font-variant-numeric:tabular-nums;}
+.gstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:36px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.gstat{background:var(--surface);padding:22px 22px;}
+.gstat .num{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+.gstat .num.mono{font-family:"JetBrains Mono",monospace;color:var(--accent);}
+.gstat .lbl{margin-top:9px;font-size:12.5px;color:var(--muted);line-height:1.45;}
+.ghero-cta{display:flex;flex-wrap:wrap;gap:12px;}
+
+.gsec{padding:54px 0;border-bottom:1px solid var(--line);}
+.gsec:last-of-type{border-bottom:none;}
+.gsec-head{margin-bottom:30px;}
+.gsec-head .eyebrow{display:block;margin-bottom:12px;}
+.gsec-head h2{margin:0;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.025em;font-weight:800;line-height:1.2;}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;font-size:14.5px;color:var(--ink);line-height:1.55;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.check:hover{transform:translateY(-2px);border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.check .ck{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px;}
+
+.concepts{display:grid;gap:16px;}
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;
+  transition:border-color .25s,box-shadow .25s;}
+.concept:hover{border-color:var(--accent-line);box-shadow:0 10px 26px rgba(16,21,40,.06);}
+.concept h3{margin:0 0 10px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.concept h3::before{content:"Q ";color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:600;}
+.concept p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.concept p b{color:var(--ink);}
+.formula{margin-top:18px;background:var(--dark);color:#fff;border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:15px;letter-spacing:.01em;text-align:center;}
+.formula .op{color:color-mix(in oklab,var(--accent) 55%,#fff);}
+
+.prep{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--radius);padding:24px 28px;}
+.prep .ph{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:14px;}
+.prep ul{margin:0;padding-left:0;list-style:none;display:grid;gap:10px;}
+.prep li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink);line-height:1.6;}
+.prep li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+.steps{display:grid;gap:0;}
+.step{position:relative;display:grid;grid-template-columns:auto 1fr;gap:22px;padding:22px 0;}
+.step:not(:last-child){border-bottom:1px dashed var(--line);}
+.step .sn{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;color:var(--accent);
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--accent-line);background:var(--surface);
+  display:grid;place-items:center;flex:none;}
+.step h3{margin:0 0 8px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+.step p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.7;}
+.step .tip{margin-top:10px;font-size:13px;color:var(--accent);background:var(--accent-soft);
+  border-left:2px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;}
+.step p b,.step h3 .tab{color:var(--ink);}
+.tab{font-family:"Pretendard Variable",Pretendard,sans-serif;font-weight:600;font-size:.92em;letter-spacing:.01em;
+  background:color-mix(in oklab,var(--ink) 5%,transparent);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;}
+
+.outs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+  transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;}
+.out:hover{transform:translateY(-3px);border-color:var(--accent-line);box-shadow:0 12px 30px rgba(16,21,40,.07);}
+.out h3{margin:0 0 6px;font-size:15.5px;font-weight:700;}
+.out p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
+
+.faq{display:grid;gap:10px;}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .25s;}
+.faq details[open]{border-color:var(--accent-line);}
+.faq summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:12px;color:var(--ink);}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary .qx{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-size:14px;font-weight:800;transition:transform .3s var(--ease),background .25s,color .25s;}
+.faq details[open] summary .qx{transform:rotate(45deg);background:var(--accent);color:#fff;}
+.faq .ans{padding:0 22px 20px 56px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+.cta-band{background:var(--dark);color:#fff;position:relative;overflow:hidden;border-radius:var(--radius);margin:54px 0;}
+.cta-band::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 80% at 85% 0%,color-mix(in oklab,var(--accent) 30%,transparent),transparent 65%);pointer-events:none;}
+.cta-band .in{position:relative;z-index:1;padding:42px 44px;}
+.cta-band h2{margin:0 0 8px;font-size:clamp(21px,2.6vw,28px);font-weight:800;letter-spacing:-.02em;}
+.cta-band p{margin:0 0 22px;color:#9aa3b4;font-size:15px;}
+
+.related{padding:46px 0 10px;}
+.related .eyebrow{margin-bottom:18px;display:block;}
+.rel-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.rel-grid a{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:9px 16px;transition:color .2s,border-color .2s,transform .15s;}
+.rel-grid a:hover{color:var(--accent);border-color:var(--accent-line);transform:translateY(-1px);}
+
+.foot{border-top:1px solid var(--line);padding:40px 0;margin-top:30px;}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;}
+.foot .disc{font-size:12.5px;color:var(--faint);line-height:1.6;white-space:nowrap;}
+.foot .disc b{color:var(--muted);}
+.foot .cr{font-size:12.5px;color:var(--faint);}
+
+@media (max-width:720px){
+  .checks,.outs{grid-template-columns:1fr;}
+  .nav a:not(.btn){display:none;}
+  .foot .disc{white-space:normal;}
+}
+</style>
 </head>
 <body>
+<script>document.documentElement.className+=" js";</script>
 
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
-    <div class="nav-links">
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>WAT</b><span>Woongcpa's Audit Tools</span></a>
+    <nav class="nav">
       <a href="../index.html#valuation">평가</a>
       <a href="../index.html#audit">감사보조</a>
       <a href="../index.html#reference">리서치</a>
-      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기</a>
-    </div>
-  </div>
-</nav>
-
-<header class="wrap g-hero">
-  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#valuation">평가</a> · RCPS·DCF 평가</div>
-  <div class="g-top">
-    <div>
-      <h1>RCPS · DCF 평가<span class="en">상환전환우선주 / 현금흐름할인 · K-IFRS 1109</span></h1>
-    </div>
-  </div>
-  <p class="g-lead">투자받을 때 흔히 쓰는 <b>상환전환우선주(RCPS)</b>나 전환사채는 "보통주 같기도, 빚 같기도" 한 복합금융상품입니다.
-    이 도구는 그 공정가치를 K-IFRS 1109 기준으로 계산하고, 사업가치(DCF)까지 한 흐름으로 평가합니다.</p>
-  <div class="g-cta">
-    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기 →</a>
-    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+      <a class="btn sm dark" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener"><span class="dot"></span>도구 바로가기</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap g-body">
+<div class="wrap">
+  <nav class="crumb">
+    <a href="../index.html">WAT</a><span class="sep">/</span>
+    <a href="../index.html#valuation">평가</a><span class="sep">/</span>
+    RCPS·DCF 평가
+  </nav>
 
-  <section class="g-block">
-    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
-    <div class="who">
-      <div class="item"><span class="chk">✓</span> RCPS·전환사채를 발행/투자한 회사의 결산 공정가치를 구해야 하는 회계담당자</div>
-      <div class="item"><span class="chk">✓</span> 파생상품 분리·내재파생 평가 근거가 필요한 감사인</div>
-      <div class="item"><span class="chk">✓</span> 비상장기업 지분·사업가치를 DCF로 산정해야 하는 평가자</div>
-      <div class="item"><span class="chk">✓</span> 변동성·할인율 가정의 출처를 조서로 남겨야 하는 실무자</div>
+  <section class="ghero">
+    <span class="ghero-glow" aria-hidden="true"></span>
+    <div class="hero-badge" data-reveal data-step="0"><i></i> 평가 · Valuation</div>
+    <div class="kicker" data-reveal data-step="1">V</div>
+    <h1 data-reveal data-step="2">RCPS · DCF 평가</h1>
+    <div class="subt" data-reveal data-step="3">상환전환우선주 / 현금흐름할인</div>
+    <p class="lede" data-reveal data-step="4">투자받을 때 흔히 쓰는 <b>상환전환우선주(RCPS)</b>나 전환사채는 "자본 같기도, 부채 같기도" 한 복합금융상품입니다.
+       이 도구는 그 공정가치를 K-IFRS 1109 기준으로 계산하고, 사업가치(DCF)까지 한 흐름으로 평가합니다.</p>
+    <div class="ghero-cta" data-reveal data-step="5">
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 바로가기 →</a>
+      <a class="btn ghost" href="../index.html">다른 도구 보기</a>
+    </div>
+
+    <div class="gstats" data-reveal data-step="6">
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">교차검증 평가모형</div></div>
+      <div class="gstat"><div class="num tnum" data-count="5">0</div><div class="lbl">따라 하기 단계</div></div>
+      <div class="gstat"><div class="num tnum" data-count="4">0</div><div class="lbl">핵심 산출 지표</div></div>
+      
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
-    <div class="concept">
-      <h4>왜 RCPS는 그냥 더하기로 안 끝나나요?</h4>
-      <p>RCPS에는 ① 약속된 배당·상환을 받을 <b>채권 성격</b>과 ② 보통주로 바꿀 수 있는 <b>전환권(옵션)</b>이 섞여 있습니다.
-        옵션은 미래 주가가 오를수록 가치가 커지므로, 단순 현재가치가 아니라 <b>주가의 변동성</b>을 반영한 모형으로 평가해야 합니다.</p>
-    </div>
-    <div class="concept">
-      <h4>4개 모형을 함께 쓰는 이유</h4>
-      <p>같은 RCPS도 보는 각도에 따라 값이 달라집니다. 이 도구는 서로 다른 4개 모형으로 교차 계산해 결과의 합리성을 스스로 점검합니다.</p>
-      <span class="formula">총가치 = 채권가치 + 전환권가치 (± 상환·기타 조건)</span>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">이런 분께 · Who it's for</div><h2>이런 분께 필요합니다</h2></div>
+    <div class="checks">
+      <div class="check" data-reveal data-step="0"><span class="ck">✓</span><div>RCPS·전환사채를 발행/투자한 회사의 결산 공정가치를 구해야 하는 회계담당자</div></div>
+      <div class="check" data-reveal data-step="1"><span class="ck">✓</span><div>파생상품 분리·내재파생 평가 근거가 필요한 감사인</div></div>
+      <div class="check" data-reveal data-step="2"><span class="ck">✓</span><div>비상장기업 지분·사업가치를 DCF로 산정해야 하는 평가자</div></div>
+      <div class="check" data-reveal data-step="3"><span class="ck">✓</span><div>변동성·할인율 가정의 출처를 조서로 남겨야 하는 실무자</div></div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">3</span> 준비물</h2>
-    <div class="prep">
-      <h4>📋 시작 전에 챙겨주세요</h4>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">핵심 개념 · Key concepts</div><h2>미리 알아두면 좋은 개념</h2></div>
+    <div class="concepts">
+      <div class="concept" data-reveal data-step="0">
+        <h3>왜 RCPS는 그냥 더하기로 안 끝나나요?</h3>
+        <p>RCPS에는 ① 약속된 배당·상환을 받을 <b>채권 성격</b>과 ② 보통주로 바꿀 수 있는 <b>전환권(옵션)</b>이 섞여 있습니다.
+           옵션은 미래 주가가 오를수록 가치가 커지므로, 단순 현재가치가 아니라 <b>주가의 변동성</b>을 반영한 모형으로 평가해야 합니다.</p>
+      </div>
+      <div class="concept" data-reveal data-step="1">
+        <h3>4개 모형을 함께 쓰는 이유</h3>
+        <p>같은 RCPS도 보는 각도에 따라 값이 달라집니다. 이 도구는 서로 다른 4개 모형으로 교차 계산해 결과의 합리성을 스스로 점검합니다.</p>
+        <div class="formula">총가치 = 채권가치 <span class="op">+</span> 전환권가치 <span class="op">(±</span> 상환·기타 조건<span class="op">)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">준비물 · What you need</div><h2>준비물</h2></div>
+    <div class="prep" data-reveal>
+      <div class="ph">📋 시작 전에 챙겨주세요</div>
       <ul>
         <li>발행 계약서: 발행금액·발행주식수·배당률(우선배당)·만기·상환조건·전환비율</li>
         <li>평가기준일(보통 결산일)</li>
@@ -77,70 +257,164 @@
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">사용법 · Step by step</div><h2>이렇게 따라 하세요</h2></div>
     <div class="steps">
-      <div class="step">
-        <h4>계약조건 입력</h4>
-        <p>상단 <b>계약조건</b> 탭에서 발행금액·주식수·배당률·만기·전환·상환 조건을 입력합니다. 계약서 숫자를 그대로 옮기면 됩니다.</p>
+      <div class="step" data-reveal data-step="0">
+        <div class="sn">01</div>
+        <div>
+          <h3>계약조건 입력</h3>
+          <p>상단 <span class="tab">계약조건</span> 탭에서 발행금액·주식수·배당률·만기·전환·상환 조건을 입력합니다. 계약서 숫자를 그대로 옮기면 됩니다.</p>
+        </div>
       </div>
-      <div class="step">
-        <h4>변동성 산출</h4>
-        <p><b>변동성</b> 탭에서 비교 가능한 상장사(유사기업)를 고르면 주가 변동성을 자동 계산합니다. 비상장이라 직접 변동성이 없을 때 쓰는 표준 방법입니다.</p>
-        <span class="tip">팁: 업종·규모가 비슷한 회사를 2~3곳 고르면 더 안정적입니다.</span>
+      <div class="step" data-reveal data-step="1">
+        <div class="sn">02</div>
+        <div>
+          <h3>변동성 산출</h3>
+          <p><span class="tab">변동성</span> 탭에서 비교 가능한 상장사(유사기업)를 고르면 주가 변동성을 자동 계산합니다. 비상장이라 직접 변동성이 없을 때 쓰는 표준 방법입니다.</p>
+          <div class="tip">팁: 업종·규모가 비슷한 회사를 2~3곳 고르면 더 안정적입니다.</div>
+        </div>
       </div>
-      <div class="step">
-        <h4>RCPS 평가 실행</h4>
-        <p><b>RCPS</b> 탭에서 평가를 실행하면 채권가치·전환권가치로 분해된 공정가치와 4개 모형 비교가 나옵니다.</p>
+      <div class="step" data-reveal data-step="2">
+        <div class="sn">03</div>
+        <div>
+          <h3>RCPS 평가 실행</h3>
+          <p><span class="tab">RCPS</span> 탭에서 평가를 실행하면 채권가치·전환권가치로 분해된 공정가치와 4개 모형 비교가 나옵니다.</p>
+        </div>
       </div>
-      <div class="step">
-        <h4>(필요 시) 사업가치 DCF·WACC</h4>
-        <p>지분가치 산정이 필요하면 <b>DCF</b>·<b>WACC</b> 탭에서 추정 현금흐름과 할인율을 입력해 사업가치를 구합니다. <b>부트</b> 탭은 금리 곡선을 만들어 줍니다.</p>
+      <div class="step" data-reveal data-step="3">
+        <div class="sn">04</div>
+        <div>
+          <h3>(필요 시) 사업가치 DCF·WACC</h3>
+          <p>지분가치 산정이 필요하면 <span class="tab">DCF</span>·<span class="tab">WACC</span> 탭에서 추정 현금흐름과 할인율을 입력해 사업가치를 구합니다. <span class="tab">부트</span> 탭은 금리 곡선을 만들어 줍니다.</p>
+        </div>
       </div>
-      <div class="step">
-        <h4>결과 확인·내보내기</h4>
-        <p>모형별 결과와 민감도를 확인하고, 조서용으로 정리된 결과를 저장합니다.</p>
+      <div class="step" data-reveal data-step="4">
+        <div class="sn">05</div>
+        <div>
+          <h3>결과 확인·내보내기</h3>
+          <p>모형별 결과와 민감도를 확인하고, 조서용으로 정리된 결과를 저장합니다.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="g-block">
-    <h2><span class="num">5</span> 무엇이 나오나요</h2>
-    <div class="out">
-      <div class="item"><h4>공정가치 총액</h4><p>RCPS 1주(또는 전체)의 평가금액</p></div>
-      <div class="item"><h4>가치 분해</h4><p>채권가치 vs 전환권(옵션)가치 구분</p></div>
-      <div class="item"><h4>모형 비교</h4><p>4개 모형 결과와 합리성 점검</p></div>
-      <div class="item"><h4>민감도</h4><p>변동성·할인율이 바뀌면 값이 얼마나 변하는지</p></div>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">결과물 · Output</div><h2>무엇이 나오나요</h2></div>
+    <div class="outs">
+      <div class="out" data-reveal data-step="0"><h3>공정가치 총액</h3><p>RCPS 1주(또는 전체)의 평가금액</p></div>
+      <div class="out" data-reveal data-step="1"><h3>가치 분해</h3><p>채권가치 vs 전환권(옵션)가치 구분</p></div>
+      <div class="out" data-reveal data-step="2"><h3>모형 비교</h3><p>4개 모형 결과와 합리성 점검</p></div>
+      <div class="out" data-reveal data-step="3"><h3>민감도</h3><p>변동성·할인율이 바뀌면 값이 얼마나 변하는지</p></div>
     </div>
   </section>
 
-  <section class="g-block faq">
-    <h2><span class="num">6</span> 자주 묻는 질문</h2>
-    <details><summary>변동성을 직접 모르는데 어떻게 하나요?</summary>
-      <div class="ans">비상장사는 자기 주가 변동성이 없으므로, 업종이 비슷한 상장사(유사기업)의 변동성을 대용치로 씁니다. 도구가 유사기업을 고르면 자동으로 계산합니다.</div></details>
-    <details><summary>무위험이자율은 무엇을 넣나요?</summary>
-      <div class="ans">평가기준일의 국고채 수익률 등 만기가 비슷한 국채 금리를 씁니다. 도구가 금리 데이터 조회를 도와줍니다.</div></details>
-    <details><summary>4개 모형 값이 조금씩 다른데 어느 걸 쓰나요?</summary>
-      <div class="ans">모형마다 가정이 달라 약간의 차이는 정상입니다. 도구가 모형 간 차이를 함께 보여주므로, 차이가 합리적 범위인지 확인하고 평가 목적에 맞는 값을 선택하면 됩니다.</div></details>
-    <details><summary>결과가 조서로 바로 쓸 수 있나요?</summary>
-      <div class="ans">네. 가정의 출처와 분해 결과가 함께 정리되어 평가 근거를 조서로 남기기 좋습니다.</div></details>
+  <section class="gsec">
+    <div class="gsec-head" data-reveal><div class="eyebrow">FAQ · 자주 묻는 질문</div><h2>자주 묻는 질문</h2></div>
+    <div class="faq">
+      <details data-reveal data-step="0">
+        <summary><span class="qx">+</span>변동성을 직접 모르는데 어떻게 하나요?</summary>
+        <div class="ans">비상장사는 자기 주가 변동성이 없으므로, 업종이 비슷한 상장사(유사기업)의 변동성을 대용치로 씁니다. 도구가 유사기업을 고르면 자동으로 계산합니다.</div>
+      </details>
+      <details data-reveal data-step="1">
+        <summary><span class="qx">+</span>무위험이자율은 무엇을 넣나요?</summary>
+        <div class="ans">평가기준일의 국고채 수익률 등 만기가 비슷한 국채 금리를 씁니다. 도구가 금리 데이터 조회를 도와줍니다.</div>
+      </details>
+      <details data-reveal data-step="2">
+        <summary><span class="qx">+</span>4개 모형 값이 조금씩 다른데 어느 걸 쓰나요?</summary>
+        <div class="ans">모형마다 가정이 달라 약간의 차이는 정상입니다. 도구가 모형 간 차이를 함께 보여주므로, 차이가 합리적 범위인지 확인하고 평가 목적에 맞는 값을 선택하면 됩니다.</div>
+      </details>
+      <details data-reveal data-step="3">
+        <summary><span class="qx">+</span>결과가 조서로 바로 쓸 수 있나요?</summary>
+        <div class="ans">네. 가정의 출처와 분해 결과가 함께 정리되어 평가 근거를 조서로 남기기 좋습니다.</div>
+      </details>
+    </div>
   </section>
 
-  <div class="endcta">
-    <h2>지금 RCPS·DCF 평가를 시작하세요</h2>
-    <p>계약서 숫자만 있으면 몇 분 안에 공정가치가 나옵니다.</p>
-    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기 →</a>
-  </div>
+  <section class="cta-band" data-reveal>
+    <div class="in">
+      <h2>지금 RCPS·DCF 평가를 시작하세요</h2>
+      <p>계약서 숫자만 있으면 몇 분 안에 공정가치가 나옵니다.</p>
+      <a class="btn" href="https://wat.taild5874c.ts.net/#tool=rcps-dcf" target="_blank" rel="noopener">도구 열기 →</a>
+    </div>
+  </section>
 
-  <div class="more-tools"><a href="accounting.html">회계기준 AI</a><a href="audit.html">감사·윤리기준 AI</a><a href="bc.html">BC 금융기관조회서</a><a href="cc.html">CC 채권채무조회서</a><a href="ifrs16.html">IFRS16 리스 계산기</a><a href="ifrs18.html">IFRS18 컨버전 툴</a><a href="irs.html">IRS 평가</a><a href="jet.html">JET 분개 테스트</a><a href="risk.html">Risk Tool</a><a href="tax.html">세무 AI</a></div>
-</main>
+  <section class="related">
+    <span class="eyebrow">다른 설명서</span>
+    <div class="rel-grid">
+      <a href="accounting.html">회계기준 AI</a>
+      <a href="audit.html">감사·윤리기준 AI</a>
+      <a href="bc.html">BC 금융기관조회서</a>
+      <a href="cc.html">CC 채권채무조회서</a>
+      <a href="ifrs16.html">IFRS16 리스 계산기</a>
+      <a href="ifrs18.html">IFRS18 컨버전 툴</a>
+      <a href="irs.html">IRS 평가</a>
+      <a href="jet.html">JET</a>
+      <a href="risk.html">Risk Tool</a>
+      <a href="tax.html">세무 AI</a>
+    </div>
+  </section>
+</div>
 
-<footer class="legal">
-  <div class="inner">
-    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
-    <span class="right">© 2026 Woongcpa</span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="disc"><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</div>
+    <div class="cr">© 2026 Woongcpa</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = "cubic-bezier(.22,.61,.36,1)";
+  var DIST = 14, DUR = 660, STAG = 70;
+  var reveals = [].slice.call(document.querySelectorAll("[data-reveal]"));
+  reveals.forEach(function(el){
+    if(reduce){ el.style.opacity=1; return; }
+    var step = parseInt(el.getAttribute("data-step")||"0",10);
+    el.style.transform = "translateY("+DIST+"px)";
+    el.style.transition = "opacity "+DUR+"ms "+EASE+", transform "+DUR+"ms "+EASE;
+    el.style.transitionDelay = (step*STAG)+"ms";
+  });
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+  function near(el){ var r=el.getBoundingClientRect(); return r.top < vh()-40 && r.bottom>0; }
+  var counters = [].slice.call(document.querySelectorAll("[data-count]"));
+  function runCount(el){
+    var target = parseFloat(el.getAttribute("data-count"))||0;
+    if(reduce){ el.textContent = Math.round(target).toLocaleString("ko-KR"); return; }
+    var start=null, ease=function(t){return 1-Math.pow(1-t,3);};
+    function tick(now){
+      if(start===null) start=now;
+      var p=Math.min(1,(now-start)/1100);
+      el.textContent = Math.round(target*ease(p)).toLocaleString("ko-KR");
+      if(p<1) requestAnimationFrame(tick); else el.textContent = Math.round(target).toLocaleString("ko-KR");
+    }
+    requestAnimationFrame(tick);
+  }
+  function check(){
+    if(reduce) return;
+    reveals.forEach(function(el){
+      if(el.__shown) return;
+      if(near(el)){ el.__shown=true; el.style.opacity="1"; el.style.transform="none"; }
+    });
+    counters.forEach(function(el){
+      if(el.__counted) return;
+      var r=el.getBoundingClientRect();
+      if(r.top < vh() && r.bottom>0){ el.__counted=true; runCount(el); }
+    });
+  }
+  if(reduce){ counters.forEach(runCount); }
+  check();
+  window.addEventListener("scroll", check, {passive:true});
+  window.addEventListener("resize", check);
+  window.addEventListener("load", check);
+  setTimeout(check,60); setTimeout(check,300);
+  var hdr = document.getElementById("hdr");
+  function onScroll(){ hdr.classList.toggle("scrolled", window.scrollY>8); }
+  onScroll();
+  window.addEventListener("scroll", onScroll, {passive:true});
+})();
+</script>
 </body>
 </html>
