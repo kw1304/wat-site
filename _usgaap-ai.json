@@ -2,7 +2,7 @@
   "slug": "usgaap",
   "tool_id": "usgaap-ai",
   "category": "reference",
-  "name": "US GAAP AI",
+  "name": "미국회계기준 AI",
   "en": "US GAAP (FASB ASC) Q&A",
   "desc": "미국 회계기준(US GAAP·FASB ASC)을 ASC 조문 근거로 답하는 질의응답 도구입니다. 한국 감사인이 미국 자회사·SEC 등록기업 회계와 K-IFRS 차이를 빠르게 확인할 수 있습니다.",
   "feats": ["체계별 관점(ASC 본문·SEC 규정·사기업 대안)", "빠른답변 / 정밀검색(출처 URL) 모드", "ASC Topic 조문 인용 + K-IFRS 차이"],
