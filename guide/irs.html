@@ -204,7 +204,7 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
     <h1 data-reveal data-step="2">IRS 평가</h1>
     <div class="subt" data-reveal data-step="3">이자율스왑 · 위험회피</div>
     <p class="lede" data-reveal data-step="4">변동금리 차입의 이자 부담을 고정하려고 맺는 계약이 <b>이자율스왑(IRS)</b>입니다.
-       이 도구는 그 스왑의 공정가치를 변동·고정 레그 현재가치로 분해해 계산하고, K-IFRS 1109 위험회피회계 적용을 위한 효과성을 검증합니다.</p>
+       이 도구는 그 스왑의 공정가치를 변동·고정 양쪽 이자 흐름(레그)의 현재가치로 분해해 계산하고, K-IFRS 1109 위험회피회계 적용을 위한 효과성을 검증합니다.</p>
     <div class="ghero-cta" data-reveal data-step="5">
       <a class="btn" href="https://wat.taild5874c.ts.net/#tool=irs" target="_blank" rel="noopener">도구 바로가기 →</a>
       <a class="btn ghost" href="../index.html">다른 도구 보기</a>
@@ -236,12 +236,12 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
         <p>IRS는 "내가 낼 이자(고정 레그)"와 "내가 받을 이자(변동 레그)"를 맞바꾸는 약속입니다.
            각 미래 이자 현금흐름을 현재가치로 당겨 두 금액을 비교하면 스왑의 <b>공정가치</b>가 나옵니다.
            값이 (+)이면 자산, (−)이면 부채로 인식합니다.</p>
-        <div class="formula">공정가치 <span class="op">=</span> 변동 레그 PV <span class="op">−</span> 고정 레그 PV</div>
+        <div class="formula">공정가치 <span class="op">=</span> 변동 레그 PV(현재가치) <span class="op">−</span> 고정 레그 PV</div>
       </div>
       <div class="concept" data-reveal data-step="1">
         <h3>위험회피 효과성은 왜 따지나요?</h3>
         <p>K-IFRS 1109에서 위험회피회계를 적용하려면, 회피 대상 위험(변동금리)과 스왑이 <b>충분히 맞물려 움직여야</b> 합니다.
-           명목금액·만기·기준금리 등 핵심 조건이 대상 차입금과 일치할 경우 효과적으로 추정하며, 도구가 조건 대조를 자동으로 수행합니다.</p>
+           명목금액·만기·기준금리 등 핵심 조건이 대상 차입금과 일치하면 위험회피가 효과적이라고 봅니다. 도구가 조건 일치 여부를 자동으로 대조합니다.</p>
       </div>
     </div>
   </section>
@@ -251,7 +251,7 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
     <div class="prep" data-reveal>
       <div class="ph">📋 시작 전에 챙겨주세요</div>
       <ul>
-        <li>IRS 계약서: 명목금액·고정금리·변동금리 기준(예: CD금리/지표금리)·결제주기·만기</li>
+        <li>IRS 계약서: 명목금액·고정금리·변동금리 기준(예: CD금리=91일물 양도성예금증서 금리, 지표금리)·결제주기·만기</li>
         <li>평가기준일(보통 결산일)</li>
         <li>위험회피 대상 항목 정보(차입금 조건) — 효과성 판단용</li>
         <li>기준 금리 곡선 데이터 — 도구가 산출을 돕습니다</li>

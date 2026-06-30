@@ -204,7 +204,7 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
     <h1 data-reveal data-step="2">Risk Tool</h1>
     <div class="subt" data-reveal data-step="3">감사대상기업 리스크 체크</div>
     <p class="lede" data-reveal data-step="4"><b>회사명 하나</b>만 입력하면 금융감독원 DART에서 최근 5개년 재무제표·공시를 자동으로 수집하고,
-       이상징후·부정·계속기업·외부 평판 <b>4축 위험 스크리닝</b> 결과와 ISA 315 위험평가 조서를 자동으로 만들어 줍니다.</p>
+       이상징후·부정·계속기업·외부 평판 <b>4축 위험 스크리닝</b> 결과와 감사 위험평가 조서(ISA 315 양식)를 자동으로 만들어 줍니다.</p>
     <div class="ghero-cta" data-reveal data-step="5">
       <a class="btn" href="https://wat.taild5874c.ts.net/#tool=risk-precheck" target="_blank" rel="noopener">도구 바로가기 →</a>
       <a class="btn ghost" href="../index.html">다른 도구 보기</a>
@@ -237,7 +237,7 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
            그래서 신호(녹/황/적)는 <b>회계감사기준·실무 임계값으로 고정</b>하고, AI는 '왜 위험한지·무엇을 더 볼지'를 설명하는 역할만 합니다.</p>
       </div>
       <div class="concept" data-reveal data-step="1">
-        <h3>수행중요성(PM) 이중게이트란?</h3>
+        <h3>수행중요성(PM): 두 조건을 함께 만족해야 신호가 켜집니다</h3>
         <p>작은 계정의 큰 % 변동이 거짓 경보를 내지 않도록, <b>%밴드를 초과하고 동시에 변동금액이 수행중요성을 초과</b>할 때만 적신호·황신호가 켜집니다.
            둘 중 하나만 해당하면 '관찰' 수준으로만 표기합니다.</p>
         <div class="formula">신호 ON <span class="op">=</span> (변동% <span class="op">></span> 밴드) <span class="op">AND</span> (변동금액 <span class="op">></span> PM)</div>
@@ -295,7 +295,7 @@ html.js [data-reveal]{opacity:0;will-change:opacity,transform;}
   <section class="gsec">
     <div class="gsec-head" data-reveal><div class="eyebrow">결과물 · Output</div><h2>무엇이 나오나요</h2></div>
     <div class="outs">
-      <div class="out" data-reveal data-step="0"><h3>종합 위험등급</h3><p>적신호·황신호 개수 기반 높음/보통/낮음 (결정론적 룰, AI 개입 없음)</p></div>
+      <div class="out" data-reveal data-step="0"><h3>종합 위험등급</h3><p>적신호·황신호 개수 기반 높음/보통/낮음 (같은 입력이면 항상 같은 결과 — AI가 등급을 바꾸지 않음)</p></div>
       <div class="out" data-reveal data-step="1"><h3>4축 신호 상세</h3><p>지표·실측값·임계값·신호등·근거 — 조서에 그대로 인용 가능</p></div>
       <div class="out" data-reveal data-step="2"><h3>외부 리스크 카드</h3><p>소송·횡령·감자·부도 등 뉴스/DART 공시 이벤트 요약</p></div>
       <div class="out" data-reveal data-step="3"><h3>후속감사절차 제안</h3><p>신호별 권고 절차 (예: 매출채권회전율 하락 → 채권조회·기수령 검토)</p></div>
