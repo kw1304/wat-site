@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>변동분석 어드바이저 설명서 · WAT</title>
+<meta name="description" content="변동분석 어드바이저 도구 사용설명서.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='33' font-family='sans-serif' font-size='24' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='central'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../styles.css?v=2">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="mark">WAT</span><span>Woongcpa's <span class="mark-en">Audit Tools</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html#valuation">평가</a><a href="../index.html#audit">감사보조</a><a href="../index.html#reference">리서치</a>
+      <a class="nav-cta" href="https://wat.taild5874c.ts.net/#tool=ap" target="_blank" rel="noopener">도구 열기</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap g-hero">
+  <div class="crumbs"><a href="../index.html">WAT</a> · <a href="../index.html#audit">감사보조</a> · 변동분석 어드바이저</div>
+  <div class="g-top">
+    <div><h1>변동분석 어드바이저<span class="en">Analytical Procedures Advisor</span></h1></div>
+  </div>
+  <p class="g-lead">분석적절차(변동분석)를 빠르게 초안 잡아 주는 도구입니다. 전기·당기 재무제표와 계정명세서(원장은 선택)를 올리면, 계정과목마다 전기 대비 증감액과 증감률을 계산하고, 사용자가 정한 두 기준(증감률 %와 증감액 금액)을 모두 넘는 유의한 계정만 골라 냅니다. 유의한 계정은 올린 명세서·원장을 훑어 증감 사유를 문장으로 채우고, 근거가 없어 사유를 확인할 수 없는 계정은 지어내지 않고 '회사 소명 요청'으로 표기해 별도 리스트로 모아 줍니다. 결과는 그대로 감사조서로 쓸 수 있는 변동분석 조서 Excel입니다.</p>
+  <div class="g-cta">
+    <a class="btn btn-primary" href="https://wat.taild5874c.ts.net/#tool=ap" target="_blank" rel="noopener">도구 열기 →</a>
+    <a class="btn btn-ghost" href="../index.html">다른 도구 보기</a>
+  </div>
+</header>
+
+<main class="wrap g-body">
+
+  <section class="g-block">
+    <h2><span class="num">1</span> 이런 분께 필요합니다</h2>
+    <div class="who">
+      <div class="item"><span class="chk">✓</span> 결산·감사에서 계정별 변동분석 조서를 작성해야 하는 회계감사인</div>
+      <div class="item"><span class="chk">✓</span> 유의한 증감만 골라 사유를 정리하고 소명받을 항목을 추려야 하는 현장 실무자</div>
+      <div class="item"><span class="chk">✓</span> 분석적절차(ISA 520)를 체계적으로 문서화하려는 감사팀</div>
+      <div class="item"><span class="chk">✓</span> 회사 담당자에게 증감 사유 소명 요청 리스트를 빠르게 만들어 보내려는 인차지</div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">2</span> 미리 알아두면 좋은 개념</h2>
+    <div class="concept">
+      <h4>왜 두 기준(증감률+금액)을 함께 보나요?</h4>
+      <p>증감률만 보면 금액이 작은 계정의 큰 %가 거짓경보를 냅니다(예: 10만→30만은 +200%지만 금액은 작음). 반대로 금액만 보면 규모는 크나 비율상 미미한 정상 변동까지 걸립니다. 이 도구는 증감률과 증감액을 모두 넘는 계정만 '유의'로 잡아 불필요한 검토를 줄입니다. 두 기준값(% 기본 10%, 금액)은 사용자가 직접 정합니다.</p>
+      <!-- 수식 있으면: <span class="formula">A = B − C</span> -->
+    </div>
+    <div class="concept">
+      <h4>사유는 근거가 있을 때만 씁니다</h4>
+      <p>유의한 계정의 사유는 올린 명세서를 먼저, 그다음 원장을 스크리닝해 실제 근거가 드러날 때만 문장으로 채웁니다. 근거가 없으면 그럴듯한 사유를 지어내지 않고 '원장·명세서상 사유 확인 불가 — 회사 소명 요청'으로 정직하게 표기합니다. 감사조서에 허위 사유가 들어가지 않도록 설계했습니다.</p>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">3</span> 준비물</h2>
+    <div class="prep">
+      <h4>📋 시작 전에 챙겨주세요</h4>
+      <ul>
+        <li>전기·당기 재무제표 Excel (.xlsx/.xlsm) — 비교식 한 파일이거나 연도별 각각</li>
+        <li>계정명세서 Excel (여러 개 업로드 가능) — 증감 사유의 근거가 됩니다</li>
+        <li>(선택) 원장 Excel — 명세서로 사유가 부족할 때 추가로 스크리닝</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">4</span> 이렇게 따라 하세요</h2>
+    <div class="steps">
+      <div class="step"><h4>재무제표·명세서 업로드</h4><p>전기·당기 재무제표와 명세서(원장은 선택)를 올립니다. 파일은 서버에 저장되지 않고 메모리에서만 처리됩니다.</p></div>
+      <div class="step"><h4>유의성 기준 입력</h4><p>증감률 임계값(%)과 기준금액을 정합니다. 두 값을 모두 넘는 계정만 검토 대상이 됩니다.</p>
+        <!-- 팁 있으면: <span class="tip">팁: ...</span> --></div>
+      <div class="step"><h4>증감 분석·사유 자동기재</h4><p>계정별 증감을 계산하고, 유의한 계정은 명세서·원장을 스크리닝해 사유를 채우거나 소명요청으로 표기합니다.</p></div>
+      <div class="step"><h4>조서 내려받기</h4><p>변동분석 조서와 소명요청 리스트가 담긴 Excel을 받아 그대로 조서로 씁니다.</p></div>
+    </div>
+  </section>
+
+  <section class="g-block">
+    <h2><span class="num">5</span> 무엇이 나오나요</h2>
+    <div class="out">
+      <div class="item"><h4>변동분석 조서 시트</h4><p>계정과목·전기·당기·증감액·증감률·유의성·사유·근거(명세서/원장/요청) — 유의 계정 강조</p></div>
+      <div class="item"><h4>소명요청 리스트 시트</h4><p>사유를 확인 못 한 유의 계정만 모은, 회사 발송용 소명 요청 목록</p></div>
+      <div class="item"><h4>요약</h4><p>유의 계정 N개 중 사유확정 X · 회사요청 Y</p></div>
+      <div class="item"><h4></h4><p></p></div>
+    </div>
+  </section>
+
+  <section class="g-block faq">
+    <h2><span class="num">6</span> 자주 묻는 질문</h2>
+    <details><summary>재무제표 양식이 회사마다 다른데 되나요?</summary><div class="ans">네. 특정 양식에 종속되지 않도록 계정과목 열과 전기·당기 금액 열을 자동으로 판별합니다. 인식이 애매한 부분은 조용히 누락하지 않고 표기해 수동 확인을 유도합니다.</div></details>
+    <details><summary>사유를 AI가 지어내지 않나요?</summary><div class="ans">근거(명세서·원장)에 실제로 드러난 사유만 씁니다. 근거가 없으면 사유를 생성하지 않고 '회사 소명 요청'으로 표기합니다 — 감사조서에 허위 사유가 들어가지 않도록 원천 차단했습니다.</div></details>
+    <details><summary>유의성 기준은 어떻게 정하나요?</summary><div class="ans">증감률 임계값(% · 기본 10%)과 기준금액을 사용자가 직접 입력합니다. 두 기준을 모두 넘는 계정만 '유의'로 잡습니다. 기준금액은 수행중요성 등 감사인의 판단에 맞춰 넣으면 됩니다.</div></details>
+  </section>
+
+  <div class="endcta">
+    <h2>증감분석, 초안은 도구가 잡아 드립니다</h2>
+    <p>전기·당기 재무제표를 올리고 유의한 변동의 사유와 소명요청 목록을 한 번에 받으세요.</p>
+    <a class="btn" href="https://wat.taild5874c.ts.net/#tool=ap" target="_blank" rel="noopener">도구 열기 →</a>
+  </div>
+
+  <!-- more-tools: 자기 자신 제외한 나머지 가이드 링크. add-tool.ps1이 자동 채움 -->
+  <div class="more-tools"></div>
+</main>
+
+<footer class="legal">
+  <div class="inner">
+    <span><b>Disclaimer.</b> 본 도구는 회계감사 실무 보조용 참고자료이며, 최종 판단과 책임은 사용자에게 있습니다.</span>
+    <span class="right">© 2026 Woongcpa</span>
+  </div>
+</footer>
+
+</body>
+</html>
