@@ -4,13 +4,16 @@
 
 .DESCRIPTION
   1) guide/_template.html 로 guide/<slug>.html 생성 (스펙 JSON 치환)
-  2) index.html 의 해당 분류 CARD-INSERT 마커에 카드 삽입
-  3) 모든 가이드의 more-tools(상호 링크) 재동기화
-  4) (-Push) git add/commit/push → Render 자동 재배포
+  2) index.html 의 해당 분류 섹션(<section class="tool-section" id="...">)의
+     카드 그리드 끝에 새 카드 삽입 (CARD-INSERT 마커 없이 섹션 grid-close 앵커 기준)
+  3) (-Push) git add/commit/push → Render 자동 재배포
+
+  주의: index.html 카드 마크업은 현행 구조(article.card / badge-sq / chips / lnk)에
+  맞춘다. more-tools(가이드 상호링크)는 현 사이트가 빈칸 컨벤션이라 채우지 않는다.
 
 .EXAMPLE
-  pwsh ./add-tool.ps1 -Spec ./_tool-spec.example.json
-  pwsh ./add-tool.ps1 -Spec ./mytool.json -Push
+  .\add-tool.ps1 -Spec .\_tool-spec.example.json
+  .\add-tool.ps1 -Spec .\mytool.json -Push
 #>
 param(
   [Parameter(Mandatory=$true)][string]$Spec,
@@ -22,12 +25,13 @@ function WriteUtf8($path, $text){
   [System.IO.File]::WriteAllText($path, $text, (New-Object System.Text.UTF8Encoding($false)))
 }
 function ReadAll($path){ [System.IO.File]::ReadAllText($path, [System.Text.Encoding]::UTF8) }
+function HtmlEnc($s){ [string]$s -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' }
 
-# ── 분류별 고정값 (아이콘=분류 머리글자 통일) ──
+# ── 분류별 고정값 (badge-sq 머리글자 = 분류 첫 글자) ──
 $CAT = @{
-  valuation = @{ label='평가';     ico='v'; icon='V'; hex='3182F6' }
-  audit     = @{ label='감사보조'; ico='a'; icon='A'; hex='7C3AED' }
-  reference = @{ label='리서치';   ico='r'; icon='R'; hex='00C2B3' }
+  valuation = @{ label='평가';     ico='v'; icon='V'; hex='3182F6'; sec='valuation' }
+  audit     = @{ label='감사보조'; ico='a'; icon='A'; hex='7C3AED'; sec='audit' }
+  reference = @{ label='리서치';   ico='r'; icon='R'; hex='00C2B3'; sec='reference' }
 }
 
 # ── 스펙 로드 ──
@@ -65,65 +69,51 @@ $map = @{
   '{{FAQ_2_Q}}'=(J $s.faq 1 'q'); '{{FAQ_2_A}}'=(J $s.faq 1 'a');
   '{{FAQ_3_Q}}'=(J $s.faq 2 'q'); '{{FAQ_3_A}}'=(J $s.faq 2 'a');
   '{{CTA_TITLE}}'=$s.cta_title; '{{CTA_SUB}}'=$s.cta_sub;
-  '{{MORE_TOOLS}}'=''   # 아래에서 일괄 재동기화
+  '{{MORE_TOOLS}}'=''   # 현 사이트 컨벤션: 빈칸
 }
 foreach($k in $map.Keys){ $tpl = $tpl.Replace($k, [string]$map[$k]) }
 WriteUtf8 $guidePath $tpl
 Write-Host "생성: guide/$($s.slug).html"
 
-# ── 2) index.html 카드 삽입 ──
-$feats = ($s.feats | ForEach-Object { "<span class=`"feat`">$_</span>" }) -join ''
+# ── 2) index.html 카드 삽입 (섹션 grid-close 앵커 기준) ──
+# 현행 카드 마크업: article.card > card-top(badge-sq + card-tag) / h3 / p / chips / card-links.
+$chips = ($s.feats | ForEach-Object { "<span class=`"chip`">$(HtmlEnc $_)</span>" }) -join ''
+$openUrl = "https://wat.taild5874c.ts.net/#tool=$($s.tool_id)"
 $card = @"
-    <!-- $($s.name) -->
-    <article class="tcard">
-      <div class="top">
-        <div class="ico ico-$($c.ico)">$($c.icon)</div>
-        <h3>$($s.name)<span class="en">$($s.en)</span></h3>
-      </div>
-      <p class="desc">$($s.desc)</p>
-      <div class="feats">$feats</div>
-      <div class="actions">
-        <a class="a-guide" href="guide/$($s.slug).html">설명서 보기</a>
-        <a class="a-open" href="https://wat.taild5874c.ts.net/#tool=$($s.tool_id)" target="_blank" rel="noopener">도구 열기</a>
-      </div>
-    </article>
-    <!-- CARD-INSERT:$($s.category) -->
+      <article class="card" data-reveal data-step="3">
+        <div class="card-top"><div class="badge-sq">$($c.icon)</div><div class="card-tag mono">$(HtmlEnc $s.en)</div></div>
+        <div><h3>$(HtmlEnc $s.name)</h3></div>
+        <p>$(HtmlEnc $s.desc)</p>
+        <div class="chips">$chips</div>
+        <div class="card-links">
+          <a class="lnk" href="guide/$($s.slug).html" target="_blank" rel="noopener">설명서 보기</a>
+          <a class="lnk go" href="$openUrl" target="_blank" rel="noopener">도구 열기 <span class="arr">&#8594;</span></a>
+        </div>
+      </article>
 "@
+$card = $card.Replace("`r`n","`n").TrimEnd("`n")
+
 $indexPath = Join-Path $root 'index.html'
 $idx = ReadAll $indexPath
-$marker = "    <!-- CARD-INSERT:$($s.category) -->"
-if($idx -notmatch [regex]::Escape($marker)){ throw "index.html에 마커 없음: CARD-INSERT:$($s.category)" }
-$idx = $idx.Replace($marker, $card.TrimEnd("`r","`n"))
+$nl = if($idx -match "`r`n"){ "`r`n" } else { "`n" }   # 파일 개행 스타일 보존
+
+# 해당 섹션 시작 이후 첫 grid-close 3연속("    </div>" + "  </div>" + "</section>") 앞에 삽입.
+# 이 3줄 시퀀스는 tool-section 끝에서만 나타나 앵커로 안전(tool-head 내부 </div>와 구분).
+$secStart = $idx.IndexOf("<section class=`"tool-section`" id=`"$($c.sec)`">")
+if($secStart -lt 0){ throw "index.html에 섹션 없음: tool-section id=$($c.sec)" }
+$closeRe = [regex]"(\r?\n    </div>\r?\n  </div>\r?\n</section>)"
+$m = $closeRe.Match($idx, $secStart)
+if(-not $m.Success){ throw "섹션 grid-close 앵커를 찾지 못함: id=$($c.sec)" }
+$cardBlock = $nl + ($card -replace "`n", $nl)
+$idx = $idx.Substring(0, $m.Index) + $cardBlock + $idx.Substring($m.Index)
 WriteUtf8 $indexPath $idx
 Write-Host "카드 삽입: [$($s.category)] $($s.name)"
 
-# ── 3) 모든 가이드 more-tools 재동기화 ──
-$guides = Get-ChildItem (Join-Path $root 'guide') -Filter '*.html' |
-  Where-Object { $_.Name -ne '_template.html' }
-# 슬러그→표시명 레지스트리 (<h1> 첫 텍스트 = name, <span class="en"> 전까지)
-$reg = @{}
-foreach($g in $guides){
-  $html = ReadAll $g.FullName
-  if($html -match '<div><h1>([^<]+)<span class="en">'){ $reg[$g.BaseName] = $Matches[1].Trim() }
-  elseif($html -match '<h1>([^<]+)<span class="en">'){ $reg[$g.BaseName] = $Matches[1].Trim() }
-  else { $reg[$g.BaseName] = $g.BaseName }
-}
-foreach($g in $guides){
-  $html = ReadAll $g.FullName
-  $links = foreach($slug in ($reg.Keys | Sort-Object)){
-    if($slug -ne $g.BaseName){ "<a href=`"$slug.html`">$($reg[$slug])</a>" }
-  }
-  $block = "<div class=`"more-tools`">" + ($links -join '') + "</div>"
-  $new = [regex]::Replace($html, '<div class="more-tools">.*?</div>', { $block }, 'Singleline')
-  if($new -ne $html){ WriteUtf8 $g.FullName $new }
-}
-Write-Host "more-tools 재동기화: $($reg.Count)개 가이드"
-
-# ── 4) 푸시 ──
+# ── 3) 푸시 ──
 if($Push){
   Push-Location $root
   git add -A
-  git commit -m "feat(site): $($s.name) 카드 + 설명서 추가" | Out-Null
+  git commit -m "feat(site): $($s.name) 카드 + 설명서 추가($($c.label))" | Out-Null
   git push origin main
   Pop-Location
   Write-Host "푸시 완료 → Render 자동 재배포"
